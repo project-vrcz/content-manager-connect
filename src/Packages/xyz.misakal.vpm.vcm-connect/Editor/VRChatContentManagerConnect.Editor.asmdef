@@ -1,0 +1,24 @@
+{
+    "name": "VRChatContentManagerConnect.Editor",
+    "rootNamespace": "VRChatContentManagerConnect.Editor",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "VCMC.Microsoft.Extensions.DependencyInjection.dll",
+        "VCMC.Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "VCMC.Microsoft.Bcl.AsyncInterfaces.dll",
+        "VCMC.System.Text.Json.dll",
+        "VCMC.System.Net.Http.Json.dll",
+        "VCMC.System.IO.Pipelines.dll",
+        "VCMC.System.Text.Encodings.Web.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

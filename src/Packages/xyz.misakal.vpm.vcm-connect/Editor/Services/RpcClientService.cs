@@ -1,0 +1,184 @@
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Threading.Tasks;
+using UnityEngine;
+using VRChatContentManagerConnect.Editor.Models;
+using VRChatContentManagerConnect.Editor.Models.RpcApi.Request;
+using VRChatContentManagerConnect.Editor.Models.RpcApi.Response;
+using Random = System.Random;
+
+namespace VRChatContentManagerConnect.Editor.Services;
+
+internal sealed class RpcClientService {
+    public event EventHandler<RpcClientState>? StateChanged;
+    public event EventHandler<string>? IdentityPromptChanged; 
+    
+    public RpcClientState State { get; private set; } = RpcClientState.Disconnected;
+
+    private readonly string _clientId;
+    
+    private readonly IRpcClientSessionProvider _sessionProvider;
+    private string? _token;
+
+    private Uri? _baseUrl;
+    private string? _identityPrompt;
+
+    private readonly HttpClient _httpClient;
+
+    private readonly JsonSerializerOptions _serializerOptions = new() {
+        RespectNullableAnnotations = true
+    };
+    
+    public RpcClientService(IRpcClientIdProvider clientIdProvider, IRpcClientSessionProvider sessionProvider) {
+        _sessionProvider = sessionProvider;
+        _clientId = clientIdProvider.GetClientId();
+        _httpClient = new HttpClient();
+
+        _httpClient.DefaultRequestHeaders.UserAgent.Add(
+            new ProductInfoHeaderValue(new ProductHeaderValue("VRChatContentManager.ConnectEditorApp", "snapshot")));
+    }
+
+    public async Task TryRestoreSessionAsync() {
+        var session = await _sessionProvider.GetSessionsAsync();
+        
+        if (session is null) return;
+
+        var hostUri = new Uri(session.Host);
+        var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/auth/metadata"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Token);
+        
+        var response = await _httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var metadata = await response.Content.ReadFromJsonAsync<AuthMetadataResponse>();
+        if (metadata is null)
+            throw new Exception("Invalid response from server.");
+        
+        _httpClient.BaseAddress = hostUri;
+        _token = session.Token;
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+        _baseUrl = hostUri;
+        
+        ChangeState(RpcClientState.Connected);
+    }
+
+    public string GetClientId() {
+        return _clientId;
+    }
+
+    public string? GetIdentityPrompt() {
+        return _identityPrompt;
+    }
+
+    public async ValueTask<string> RequestChallengeAsync(string baseUrl) {
+        await DisconnectAsync();
+        
+        var baseUri = new Uri(baseUrl);
+        
+        var identityPrompt = SetRandomIdentityPrompt();
+
+        var requestUri = new Uri(baseUri, "/v1/auth/request-challenge");
+        var requestBody = new RequestChallengeRequest(_clientId, identityPrompt);
+        var response = await _httpClient.PostAsJsonAsync(requestUri, requestBody, _serializerOptions);
+
+        if (response.StatusCode != HttpStatusCode.NoContent) {
+            throw new Exception("Unexpected response status code: " + response.StatusCode);
+        }
+
+        _baseUrl = baseUri;
+        _httpClient.BaseAddress = baseUri;
+        ChangeState(RpcClientState.AwaitingChallenge);
+        
+        return identityPrompt;
+    }
+
+    public async Task CompleteChallengeAsync(string code) {
+        if (_baseUrl is null)
+            throw new InvalidOperationException("Base URL is not set. Call RequestChallengeAsync first.");
+        if (_identityPrompt is null)
+            throw new InvalidOperationException("IdentityPrompt is not set. Call RequestChallengeAsync first.");
+
+        var requestBody = new ChallengeRequest(_clientId, code, _identityPrompt);
+        var response = await _httpClient.PostAsJsonAsync("/v1/auth/challenge", requestBody, _serializerOptions);
+
+        if (!response.IsSuccessStatusCode) {
+            throw new Exception("Challenge failed with status code: " + response.StatusCode);
+        }
+
+        var responseBody = await response.Content.ReadFromJsonAsync<ChallengeResponse>(_serializerOptions);
+        if (responseBody is null) {
+            throw new Exception("Invalid response from server.");
+        }
+        
+        _token = responseBody.Token;
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
+        try {
+            await GetAuthMetadataAsyncCore();
+            await _sessionProvider.SetSessionAsync(new RpcClientSession(_baseUrl.ToString(), _token));
+        }
+        catch (Exception ex) {
+            Debug.LogException(ex);
+            Debug.LogError("Failed to validate token, disconnecting.");
+            
+            await DisconnectAsync();
+            return;
+        }
+
+        ChangeState(RpcClientState.Connected);
+    }
+
+    private async ValueTask<AuthMetadataResponse> GetAuthMetadataAsyncCore() {
+        var response = await _httpClient.GetFromJsonAsync<AuthMetadataResponse>("/v1/auth/metadata");
+        if (response is null) {
+            throw new Exception("Invalid response from server.");
+        }
+
+        return response;
+    }
+
+    public async Task DisconnectAsync() {
+        ChangeState(RpcClientState.Disconnected);
+        _token = null;
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+        _baseUrl = null;
+        _httpClient.BaseAddress = null;
+
+        await _sessionProvider.RemoveSessionAsync();
+
+        await Task.CompletedTask;
+    }
+    
+    private void ChangeState(RpcClientState newState) {
+        if (State == newState) return;
+        
+        State = newState;
+        StateChanged?.Invoke(this, newState);
+    }
+    
+    private string SetRandomIdentityPrompt() {
+        var words = new[]
+        {
+            "Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Black", "White", "Gray", "Silver",
+            "Gold", "Bronze", "Copper", "Iron", "Steel", "Wooden", "Plastic", "Glass", "Crystal", "Diamond"
+        };
+        
+        var random = new Random();
+        var word1 = words[random.Next(words.Length)];
+        var word2 = words[random.Next(words.Length)];
+        
+        _identityPrompt = $"{word1} {word2}";
+        IdentityPromptChanged?.Invoke(this, _identityPrompt);
+        return _identityPrompt;
+    }
+}
+
+internal enum RpcClientState {
+    Disconnected,
+    AwaitingChallenge,
+    Connected
+}

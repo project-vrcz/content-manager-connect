@@ -1,0 +1,16 @@
+.connection-state-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 18px;
+}
+
+.connection-state-text {
+    font-size: 24px;
+}
+
+.large-button {
+    font-size: 18px;
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd">
+    <Style
+        src="project://database/Packages/xyz.misakal.vpm.vcm-connect/Editor/Views/ContentManagerSettingsWindow.uss?fileID=7433441132597879392&amp;guid=2dafa2f7092cfa1489dee7c063cf1edb&amp;type=3#ContentMangaerSettingsWindow" />
+
+    <engine:VisualElement class="connection-state-container">
+        <engine:Label text="Connection to Content Manager App" />
+        <engine:Label class="connection-state-text" name="state-display-label" text="Waiting for UI" />
+        <engine:Label name="client-id-label" text="CLIENT_ID" />
+    </engine:VisualElement>
+    
+    <engine:VisualElement name="disconnected-state-container">
+        <engine:TextField name="host-inputfield" label="Host" value="http://localhost:59328" />
+        <engine:Button class="large-button" name="request-challenge-button" text="Request" />
+    </engine:VisualElement>
+    
+    <engine:VisualElement name="challenge-state-container">
+        <engine:VisualElement class="connection-state-container">
+            <engine:Label text="Identity Prompt" />
+            <engine:Label class="connection-state-text" name="identity-prompt-label" text="Waiting for UI" />
+        </engine:VisualElement>
+        
+        <engine:TextField name="code-inputfield" label="Code" />
+        <engine:Button class="large-button" name="challenge-button" text="Challenge" />
+        <engine:Button class="large-button" name="cancel-challenge-button" text="Cancel" />
+    </engine:VisualElement>
+    
+    <engine:VisualElement name="connected-state-container">
+        <engine:Button class="large-button" name="disconnect-button" text="Disconnect" />
+    </engine:VisualElement>
+</engine:UXML>
