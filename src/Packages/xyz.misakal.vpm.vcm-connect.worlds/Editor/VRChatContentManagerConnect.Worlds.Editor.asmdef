@@ -1,0 +1,26 @@
+{
+    "name": "VRChatContentManagerConnect.Worlds.Editor",
+    "rootNamespace": "VRChatContentManagerConnect.Worlds.Editor",
+    "references": [
+        "GUID:0c9bad51c4b14e6d823198f69a8b83a4",
+        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "VCMC.0Harmony.dll",
+        "VRCSDK3-Editor.dll",
+        "VRCCore-Editor.dll",
+        "VCMC.Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+        "VCMC.Microsoft.Extensions.DependencyInjection.dll",
+        "VCMC.Microsoft.Bcl.AsyncInterfaces.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

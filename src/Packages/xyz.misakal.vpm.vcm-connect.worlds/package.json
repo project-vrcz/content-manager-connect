@@ -1,0 +1,23 @@
+{
+  "name": "xyz.misakal.vpm.vcm-connect.worlds",
+  "displayName": "VRChat Content Manager Connect - Worlds",
+  "version": "0.1.0",
+  "hideInEditor": true,
+  "description": "Connect to your VRChat Content Manager",
+  "unity": "2022.3",
+  "author": {
+    "email": "lipww1234@foxmail.com",
+    "name": "Misaka-L",
+    "url": "https://misakal.xyz"
+  },
+  "changelogUrl": "https://github.com/project-vrcz/content-manager-connect/releases",
+  "documentationUrl": "https://github.com/project-vrcz/content-manager-connect",
+  "license": "MIT",
+  "licensesUrl": "https://github.com/project-vrcz/content-manager-connect/blob/main/LICENSE",
+  "keywords": [
+    "vrchat"
+  ],
+  "vpmDependencies": {
+    "xyz.misakal.vpm.vcm-connect": "0.1.0"
+  }
+}
