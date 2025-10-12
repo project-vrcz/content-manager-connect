@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -139,6 +140,30 @@ internal sealed class RpcClientService {
         }
 
         return response;
+    }
+
+    internal async ValueTask<string> UploadFileAsync(string filePath, string fileName) {
+        var fileStream = File.OpenRead(filePath);
+        
+        var content = new MultipartFormDataContent();
+        
+        var fileContent = new StreamContent(fileStream);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        
+        content.Add(fileContent, "file", fileName);
+        
+        var response = await SendAsync(new HttpRequestMessage(HttpMethod.Post, "/v1/files") {
+            Content = content
+        });
+        
+        response.EnsureSuccessStatusCode();
+        
+        var responseBody = await response.Content.ReadFromJsonAsync<UploadFileResponse>(_serializerOptions);
+        if (responseBody is null) {
+            throw new Exception("Invalid response from server.");
+        }
+        
+        return responseBody.FileId;
     }
 
     internal async ValueTask<HttpResponseMessage> SendAsync(HttpRequestMessage request) {
