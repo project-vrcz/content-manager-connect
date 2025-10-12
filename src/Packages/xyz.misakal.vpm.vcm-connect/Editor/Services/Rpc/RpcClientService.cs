@@ -11,7 +11,7 @@ using VRChatContentManagerConnect.Editor.Models.RpcApi.Request;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Response;
 using Random = System.Random;
 
-namespace VRChatContentManagerConnect.Editor.Services;
+namespace VRChatContentManagerConnect.Editor.Services.Rpc;
 
 internal sealed class RpcClientService {
     public event EventHandler<RpcClientState>? StateChanged;
@@ -136,6 +136,23 @@ internal sealed class RpcClientService {
         var response = await _httpClient.GetFromJsonAsync<AuthMetadataResponse>("/v1/auth/metadata");
         if (response is null) {
             throw new Exception("Invalid response from server.");
+        }
+
+        return response;
+    }
+
+    internal async ValueTask<HttpResponseMessage> SendAsync(HttpRequestMessage request) {
+        if (_baseUrl is null)
+            throw new InvalidOperationException("Base URL is not set. Call RequestChallengeAsync first.");
+        if (_token is null)
+            throw new InvalidOperationException("Not authenticated. Call CompleteChallengeAsync first.");
+        
+        var response = await _httpClient.SendAsync(request);
+        if (response.StatusCode == HttpStatusCode.Unauthorized) {
+            Debug.LogWarning("Unauthorized response, disconnecting.");
+            await DisconnectAsync();
+            
+            throw new InvalidOperationException("Unauthorized response.");
         }
 
         return response;

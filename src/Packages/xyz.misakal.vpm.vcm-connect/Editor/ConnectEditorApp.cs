@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using VRChatContentManagerConnect.Editor.Services;
+using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Editor;
 

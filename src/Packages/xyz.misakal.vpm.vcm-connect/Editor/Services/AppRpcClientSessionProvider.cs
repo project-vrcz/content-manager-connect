@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Threading.Tasks;
 using VRChatContentManagerConnect.Editor.Models;
+using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Editor.Services;
 

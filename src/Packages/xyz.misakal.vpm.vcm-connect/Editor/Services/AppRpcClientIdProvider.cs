@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Editor.Services;
 
