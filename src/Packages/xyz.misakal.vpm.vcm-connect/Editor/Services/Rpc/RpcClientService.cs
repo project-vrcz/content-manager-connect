@@ -177,6 +177,18 @@ internal sealed class RpcClientService {
         });
         response.EnsureSuccessStatusCode();
     }
+    
+    internal async ValueTask CreateAvatarPublishTaskAsync(
+        string avatarId, string bundleFileId, string avatarName, string platform, string unityVersion) {
+        var requestBody =
+            new CreateAvatarPublishTaskRequest(avatarId, bundleFileId, avatarName, platform, unityVersion);
+
+        var response = await SendAsync(new HttpRequestMessage(HttpMethod.Post, "/v1/tasks/avatar") {
+            Content = JsonContent.Create(requestBody)
+        });
+        
+        response.EnsureSuccessStatusCode();
+    }
 
     internal async ValueTask<HttpResponseMessage> SendAsync(HttpRequestMessage request) {
         if (_baseUrl is null)
