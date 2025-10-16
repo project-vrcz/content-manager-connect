@@ -30,7 +30,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 return originalCodes;
             }
 
-            var buildOptionsCodeIndex = codes.FindIndex(code =>
+            var buildOptionsCodeIndex = codes.FindLastIndex(buildAssetBundleCallIndex, code =>
                 code.opcode == OpCodes.Ldc_I4_S && code.operand is (sbyte)32);
             if (buildOptionsCodeIndex == -1) {
                 return originalCodes;
