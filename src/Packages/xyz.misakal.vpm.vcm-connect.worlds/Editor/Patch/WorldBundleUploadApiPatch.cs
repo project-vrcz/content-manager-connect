@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEngine;
+using VRC;
 using VRC.Core;
 using VRC.SDKBase.Editor.Api;
 using VRChatContentManagerConnect.Editor;
@@ -50,6 +51,8 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
                 Debug.Log("Bundle File Id: " + fileId);
+                
+                await rpcClient.CreateWorldPublishTaskAsync(id, fileId, Tools.Platform, Tools.UnityVersion.ToString(), worldSignature);
                 
                 return data;
             });
