@@ -168,9 +168,9 @@ internal sealed class RpcClientService {
     }
 
     internal async ValueTask CreateWorldPublishTaskAsync(
-        string worldId, string bundleFileId, string platform, string unityVersion, string? worldSignature) {
+        string worldId, string bundleFileId, string worldName, string platform, string unityVersion, string? worldSignature) {
         var requestBody =
-            new CreateWorldPublishTaskRequest(worldId, bundleFileId, platform, unityVersion, worldSignature);
+            new CreateWorldPublishTaskRequest(worldId, bundleFileId, worldName, platform, unityVersion, worldSignature);
 
         var response = await SendAsync(new HttpRequestMessage(HttpMethod.Post, "/v1/tasks/world") {
             Content = JsonContent.Create(requestBody)

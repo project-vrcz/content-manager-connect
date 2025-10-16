@@ -7,6 +7,8 @@ public record CreateWorldPublishTaskRequest(
     string WorldId,
     [property: JsonPropertyName("WorldBundleFileId")]
     string WorldBundleFileId,
+    [property: JsonPropertyName("Name")]
+    string Name,
     [property: JsonPropertyName("Platform")]
     string Platform,
     [property: JsonPropertyName("UnityVersion")]

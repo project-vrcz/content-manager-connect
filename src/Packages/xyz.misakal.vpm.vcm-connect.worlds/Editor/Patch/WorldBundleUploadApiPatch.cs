@@ -52,7 +52,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
                 Debug.Log("Bundle File Id: " + fileId);
                 
-                await rpcClient.CreateWorldPublishTaskAsync(id, fileId, Tools.Platform, Tools.UnityVersion.ToString(), worldSignature);
+                await rpcClient.CreateWorldPublishTaskAsync(id, fileId, data.Name, Tools.Platform, Tools.UnityVersion.ToString(), worldSignature);
                 
                 return data;
             });
