@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
 using HarmonyLib;
 using UnityEditor;
+using UnityEngine;
 using VRC.SDK3.Builder;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
@@ -28,12 +30,14 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                 callMethodInfo == buildAssetBundleMethodInfo);
 
             if (buildAssetBundleCallIndex == -1) {
+                Debug.LogError("[VRCCM.Connect] AvatarBuilderPatch: Could not find BuildAssetBundles call.");
                 return originalCodes;
             }
 
             var buildOptionsCodeIndex = codes.FindLastIndex(buildAssetBundleCallIndex, code =>
                 code.opcode == OpCodes.Ldc_I4_0 && code.operand is null);
             if (buildOptionsCodeIndex == -1) {
+                Debug.LogError("[VRCCM.Connect] AvatarBuilderPatch: Could not find BuildAssetBundleOptions load.");
                 return originalCodes;
             }
 
@@ -41,6 +45,20 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
             buildOptionsCode.opcode = OpCodes.Ldc_I4_S;
             buildOptionsCode.operand = (sbyte)BuildAssetBundleOptions.UncompressedAssetBundle;
 
+            var popCodeIndex = codes.FindIndex(buildAssetBundleCallIndex, code => code.opcode == OpCodes.Pop);
+            if (popCodeIndex == -1) {
+                Debug.LogError("[VRCCM.Connect] AvatarBuilderPatch: Could not find Pop after BuildAssetBundles call.");
+                return originalCodes;
+            }
+            
+            var taskDelayMethodInfo = AccessTools.Method(typeof(Thread), nameof(Thread.Sleep), new[] { typeof(int) });
+            
+            codes.InsertRange(popCodeIndex, new [] {
+                new CodeInstruction(OpCodes.Ldc_I4, 1000),
+                new CodeInstruction(OpCodes.Call, taskDelayMethodInfo),
+                new CodeInstruction(OpCodes.Nop)
+            });
+            
             return codes;
         }
     }
