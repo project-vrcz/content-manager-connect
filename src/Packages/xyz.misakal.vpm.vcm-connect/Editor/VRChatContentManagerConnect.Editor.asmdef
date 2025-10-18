@@ -15,7 +15,10 @@
         "VCMC.System.Text.Json.dll",
         "VCMC.System.Net.Http.Json.dll",
         "VCMC.System.IO.Pipelines.dll",
-        "VCMC.System.Text.Encodings.Web.dll"
+        "VCMC.System.Text.Encodings.Web.dll",
+        "VCMC.0Harmony.dll",
+        "VRCSDKBase.dll",
+        "VRCSDKBase-Editor.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],
