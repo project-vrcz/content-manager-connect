@@ -27,7 +27,8 @@ internal class ContentManagerSettingsWindow : EditorWindow {
     private Label _stateDisplayLabel;
     private Label _clientIdLabel;
 
-    [MenuItem("Window/VRChat Content Manager/Settings", priority = 2000)]
+    [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
+    [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
     public static void ShowSettings() {
         var window = GetWindow<ContentManagerSettingsWindow>();
         window.titleContent = new GUIContent("Connect Settings");
