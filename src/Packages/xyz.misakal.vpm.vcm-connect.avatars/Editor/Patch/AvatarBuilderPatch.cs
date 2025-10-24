@@ -51,10 +51,13 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                     CodeMatch.Calls(() => File.Delete(default))
                 )
                 .ThrowIfInvalid("[VRCCM.Connect] AvatarBuilderPatch: Could not find File.Delete calls.")
-                .RemoveInstruction()
-                .InsertAndAdvance(
-                    CodeInstruction.Call(() => DelayedDelete.Delete(default))
-                );
+                .Repeat(codeMatcher => {
+                    codeMatcher
+                        .RemoveInstruction()
+                        .InsertAndAdvance(
+                            CodeInstruction.Call(() => DelayedDelete.Delete(default))
+                        );
+                });
 
             return deleteCallCodeMatcher.Instructions();
         }
