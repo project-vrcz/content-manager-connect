@@ -17,7 +17,8 @@ internal static class DelayedDelete {
         RunDeleteAttempts();
         
         if (!File.Exists(path)) {
-            throw new FileNotFoundException(path);
+            Debug.LogWarning("[VRCCM.Connect] DelayedDelete: File not found, skipping delete: " + path);
+            return;
         }
 
         Debug.Log("[VRCCM.Connect] DelayedDelete: new file to delete: " + path);
