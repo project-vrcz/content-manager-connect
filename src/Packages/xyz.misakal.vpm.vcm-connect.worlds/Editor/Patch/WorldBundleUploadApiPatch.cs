@@ -9,6 +9,7 @@ using VRC;
 using VRC.Core;
 using VRC.SDKBase.Editor.Api;
 using VRChatContentManagerConnect.Editor;
+using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
@@ -24,6 +25,16 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default
         ) {
+            var app = ConnectEditorApp.Instance;
+            if (app == null) {
+                Debug.LogWarning("[VRCCM.Connect] AvatarBundleUploadApiPatch: ConnectEditorApp instance is null. Skipping patch.");
+                return true;
+            }
+
+            var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
+            if (!settings.GetSettings().UseContentManager)
+                return true;
+            
             __result = Task.Run(async () => {
                 if (string.IsNullOrEmpty(id))
                     throw new ArgumentNullException(nameof(id), "World ID cannot be null or empty.");
@@ -43,10 +54,6 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 
                 Debug.Log($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
                 // Send Bundle File to App, Start new task
-
-                var app = ConnectEditorApp.Instance;
-                if (app == null)
-                    throw new InvalidOperationException("Connect Editor App instance is null.");
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);

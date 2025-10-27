@@ -4,10 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
 using VRC.SDK3.Builder;
 using VRChatContentManagerConnect.Editor;
+using VRChatContentManagerConnect.Editor.Services;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     //   private static bool ExportCurrentAvatarResource(
@@ -18,35 +20,14 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     internal static class AvatarBuilderPatch {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
             var codes = instructions.ToList();
-            var originalCodes = codes.ToList();
 
-            var buildAssetBundleMethodInfo = AccessTools.Method(typeof(BuildPipeline),
-                nameof(BuildPipeline.BuildAssetBundles),
-                new[] {
-                    typeof(string), typeof(AssetBundleBuild[]), typeof(BuildAssetBundleOptions), typeof(BuildTarget)
-                });
-
-            var buildAssetBundleCallIndex = codes.FindIndex(code =>
-                code.opcode == OpCodes.Call && code.operand is MethodInfo callMethodInfo &&
-                callMethodInfo == buildAssetBundleMethodInfo);
-
-            if (buildAssetBundleCallIndex == -1) {
-                Debug.LogError("[VRCCM.Connect] AvatarBuilderPatch: Could not find BuildAssetBundles call.");
-                return originalCodes;
-            }
-
-            var buildOptionsCodeIndex = codes.FindLastIndex(buildAssetBundleCallIndex, code =>
-                code.opcode == OpCodes.Ldc_I4_0 && code.operand is null);
-            if (buildOptionsCodeIndex == -1) {
-                Debug.LogError("[VRCCM.Connect] AvatarBuilderPatch: Could not find BuildAssetBundleOptions load.");
-                return originalCodes;
-            }
-
-            var buildOptionsCode = codes[buildOptionsCodeIndex];
-            buildOptionsCode.opcode = OpCodes.Ldc_I4_S;
-            buildOptionsCode.operand = (sbyte)BuildAssetBundleOptions.UncompressedAssetBundle;
-
-            var deleteCallCodeMatcher = new CodeMatcher(codes)
+            var codeMatcher = new CodeMatcher(codes)
+                .MatchStartForward(
+                    CodeMatch.Calls(() => BuildPipeline.BuildAssetBundles(default, default, default, default)))
+                .ThrowIfInvalid("[VRCCM.Connect] AvatarBuilderPatch: Could not find BuildAssetBundles calls.")
+                .RemoveInstruction()
+                .InsertAndAdvance(
+                    CodeInstruction.Call(() => BuildAssetBundles(default, default, default, default)))
                 .MatchStartForward(
                     CodeMatch.Calls(() => File.Delete(default))
                 )
@@ -59,7 +40,23 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                         );
                 });
 
-            return deleteCallCodeMatcher.Instructions();
+            return codeMatcher.Instructions();
+        }
+
+        private static AssetBundleManifest BuildAssetBundles(string outputPath, AssetBundleBuild[] builds,
+            BuildAssetBundleOptions options, BuildTarget target) {
+            if (ConnectEditorApp.Instance is { } app) {
+                var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
+
+                if (settings.GetSettings().UseContentManager) {
+                    if ((options & BuildAssetBundleOptions.UncompressedAssetBundle) == 0) {
+                        options |= BuildAssetBundleOptions.UncompressedAssetBundle;
+                    }
+                }
+            }
+
+            return BuildPipeline.BuildAssetBundles(outputPath, builds,
+                options, target);
         }
     }
 }

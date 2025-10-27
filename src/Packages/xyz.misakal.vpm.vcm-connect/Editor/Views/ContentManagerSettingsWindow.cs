@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Editor.Views;
@@ -26,6 +27,8 @@ internal class ContentManagerSettingsWindow : EditorWindow {
 
     private Label _stateDisplayLabel;
     private Label _clientIdLabel;
+
+    private Toggle _enableContentManagerPublishFlowToggle;
 
     [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
     [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
@@ -57,6 +60,8 @@ internal class ContentManagerSettingsWindow : EditorWindow {
         _stateDisplayLabel = content.Q<Label>("state-display-label");
         _clientIdLabel = content.Q<Label>("client-id-label");
 
+        _enableContentManagerPublishFlowToggle = content.Q<Toggle>("enable-content-manager-toggle");
+
         if (ConnectEditorApp.Instance is not { } app)
             return;
 
@@ -80,6 +85,14 @@ internal class ContentManagerSettingsWindow : EditorWindow {
 
         _disconnectButton.clicked += async () => { await rpcClientService.DisconnectAsync(); };
         _cancelChallengeButton.clicked += async () => { await rpcClientService.DisconnectAsync(); };
+
+        var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
+
+        _enableContentManagerPublishFlowToggle.value = settings.GetSettings().UseContentManager;
+        _enableContentManagerPublishFlowToggle.RegisterValueChangedCallback(args => {
+            settings.GetSettings().UseContentManager = args.newValue;
+            settings.SaveSettings();
+        });
     }
 
     private void UpdateConnectionState(RpcClientService rpcClientService) {

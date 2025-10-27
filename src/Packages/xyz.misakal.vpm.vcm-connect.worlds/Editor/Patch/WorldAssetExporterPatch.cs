@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
+using UnityEngine;
 using VRC.SDK3.Editor.Builder;
+using VRChatContentManagerConnect.Editor;
+using VRChatContentManagerConnect.Editor.Services;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
     [HarmonyPatch(typeof(VRCWorldAssetExporter),
@@ -14,33 +19,43 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
     internal static class WorldAssetExporterPatch {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
             var codes = instructions.ToList();
-            var originalCodes = codes.ToList();
-
-            var buildAssetBundleMethodInfo = AccessTools.Method(typeof(BuildPipeline),
-                nameof(BuildPipeline.BuildAssetBundles),
-                new[] {
-                    typeof(string), typeof(AssetBundleBuild[]), typeof(BuildAssetBundleOptions), typeof(BuildTarget)
+            
+            var codeMatcher = new CodeMatcher(codes)
+                .MatchStartForward(
+                    CodeMatch.Calls(() => BuildPipeline.BuildAssetBundles(default, default, default, default)))
+                .ThrowIfInvalid("[VRCCM.Connect] WorldAssetExporterPatch: Could not find BuildAssetBundles calls.")
+                .RemoveInstruction()
+                .InsertAndAdvance(
+                    CodeInstruction.Call(() => BuildAssetBundles(default, default, default, default)))
+                .MatchStartForward(
+                    CodeMatch.Calls(() => File.Delete(default))
+                )
+                .ThrowIfInvalid("[VRCCM.Connect] WorldAssetExporterPatch: Could not find File.Delete calls.")
+                .Repeat(codeMatcher => {
+                    codeMatcher
+                        .RemoveInstruction()
+                        .InsertAndAdvance(
+                            CodeInstruction.Call(() => DelayedDelete.Delete(default))
+                        );
                 });
 
-            var buildAssetBundleCallIndex = codes.FindIndex(code =>
-                code.opcode == OpCodes.Call && code.operand is MethodInfo callMethodInfo &&
-                callMethodInfo == buildAssetBundleMethodInfo);
+            return codeMatcher.Instructions();
+        }
+        
+        private static AssetBundleManifest BuildAssetBundles(string outputPath, AssetBundleBuild[] builds,
+            BuildAssetBundleOptions options, BuildTarget target) {
+            if (ConnectEditorApp.Instance is { } app) {
+                var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
 
-            if (buildAssetBundleCallIndex == -1) {
-                return originalCodes;
+                if (settings.GetSettings().UseContentManager) {
+                    if ((options & BuildAssetBundleOptions.UncompressedAssetBundle) == 0) {
+                        options |= BuildAssetBundleOptions.UncompressedAssetBundle;
+                    }
+                }
             }
 
-            var buildOptionsCodeIndex = codes.FindLastIndex(buildAssetBundleCallIndex, code =>
-                code.opcode == OpCodes.Ldc_I4_S && code.operand is (sbyte)32);
-            if (buildOptionsCodeIndex == -1) {
-                return originalCodes;
-            }
-
-            var buildOptionsCode = codes[buildOptionsCodeIndex];
-            buildOptionsCode.operand = (sbyte)(BuildAssetBundleOptions.ForceRebuildAssetBundle |
-                                               BuildAssetBundleOptions.UncompressedAssetBundle);
-
-            return codes;
+            return BuildPipeline.BuildAssetBundles(outputPath, builds,
+                options, target);
         }
     }
 }

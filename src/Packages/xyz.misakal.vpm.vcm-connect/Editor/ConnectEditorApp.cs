@@ -23,6 +23,7 @@ internal class ConnectEditorApp {
         services.AddTransient<IRpcClientIdProvider, AppRpcClientIdProvider>();
         services.AddSingleton<RpcClientService>();
         services.AddSingleton<EditorAppLifetimeService>();
+        services.AddSingleton<AppSettingsService>();
 
         var provider = services.BuildServiceProvider();
         
