@@ -26,14 +26,15 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         ) {
             var app = ConnectEditorApp.Instance;
             if (app == null) {
-                Debug.LogWarning("[VRCCM.Connect] AvatarBundleUploadApiPatch: ConnectEditorApp instance is null. Skipping patch.");
+                Debug.LogWarning(
+                    "[VRCCM.Connect] AvatarBundleUploadApiPatch: ConnectEditorApp instance is null. Skipping patch.");
                 return true;
             }
 
             var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
             if (!settings.GetSettings().UseContentManager)
                 return true;
-            
+
             __result = Task.Run(async () => {
                 if (string.IsNullOrEmpty(id))
                     throw new ArgumentNullException(nameof(id), "Avatar ID cannot be null or empty.");
@@ -48,18 +49,34 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                     throw new FileNotFoundException("The specified bundle file does not exist.", pathToBundle);
 
                 var bundleFileName = "Avatar - " + data.Name + " - Asset bundle - " + Application.unityVersion + "_" +
-                               ApiAvatar.VERSION.ApiVersion +
-                               "_" + Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl();
-                
-                Debug.Log($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
+                                     ApiAvatar.VERSION.ApiVersion +
+                                     "_" + Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl();
+
+                Debug.Log($"AvatarId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
                 // Send Bundle File to App, Start new task
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
+                if (rpcClient.State == RpcClientState.Disconnected) {
+                    Debug.Log("[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
+
+                    try {
+                        await rpcClient.RestoreSessionAsync();
+                        Debug.Log("[VRCCM.Connect] RPC session restored successfully.");
+                    }
+                    catch (Exception ex) {
+                        Debug.LogException(ex);
+                        Debug.LogError("[VRCCM.Connect] Failed to restore RPC session. Aborting avatar bundle upload.");
+
+                        throw new InvalidOperationException("RPC client is not connected.", ex);
+                    }
+                }
+
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
                 Debug.Log("Bundle File Id: " + fileId);
-                
-                await rpcClient.CreateAvatarPublishTaskAsync(id, fileId, data.Name, Tools.Platform, Tools.UnityVersion.ToString());
-                
+
+                await rpcClient.CreateAvatarPublishTaskAsync(id, fileId, data.Name, Tools.Platform,
+                    Tools.UnityVersion.ToString());
+
                 return data;
             });
 

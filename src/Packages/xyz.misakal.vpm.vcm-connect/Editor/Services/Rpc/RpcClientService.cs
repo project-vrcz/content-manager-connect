@@ -44,10 +44,12 @@ internal sealed class RpcClientService {
             new ProductInfoHeaderValue(new ProductHeaderValue("VRChatContentManager.ConnectEditorApp", "snapshot")));
     }
 
-    public async Task TryRestoreSessionAsync() {
+    public async Task RestoreSessionAsync() {
         var session = await _sessionProvider.GetSessionsAsync();
 
-        if (session is null) return;
+        if (session is null) {
+            throw new InvalidOperationException("No session to restore.");
+        }
 
         var hostUri = new Uri(session.Host);
         var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/auth/metadata"));
@@ -168,7 +170,8 @@ internal sealed class RpcClientService {
     }
 
     internal async ValueTask CreateWorldPublishTaskAsync(
-        string worldId, string bundleFileId, string worldName, string platform, string unityVersion, string? worldSignature) {
+        string worldId, string bundleFileId, string worldName, string platform, string unityVersion,
+        string? worldSignature) {
         var requestBody =
             new CreateWorldPublishTaskRequest(worldId, bundleFileId, worldName, platform, unityVersion, worldSignature);
 
@@ -177,7 +180,7 @@ internal sealed class RpcClientService {
         });
         response.EnsureSuccessStatusCode();
     }
-    
+
     internal async ValueTask CreateAvatarPublishTaskAsync(
         string avatarId, string bundleFileId, string avatarName, string platform, string unityVersion) {
         var requestBody =
@@ -186,7 +189,7 @@ internal sealed class RpcClientService {
         var response = await SendAsync(new HttpRequestMessage(HttpMethod.Post, "/v1/tasks/avatar") {
             Content = JsonContent.Create(requestBody)
         });
-        
+
         response.EnsureSuccessStatusCode();
     }
 
