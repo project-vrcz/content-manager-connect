@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
@@ -6,114 +5,113 @@ using UnityEngine.UIElements;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Editor.Views;
+namespace VRChatContentManagerConnect.Editor.Views {
+    public class ContentManagerSettingsWindow : EditorWindow {
+        [SerializeField]
+        private VisualTreeAsset m_VisualTreeAsset = default;
 
-internal class ContentManagerSettingsWindow : EditorWindow {
-    private const string VisualTreeAssetPath =
-        "Packages/xyz.misakal.vpm.vcm-connect/Editor/Views/ContentManagerSettingsWindow.uxml";
+        private VisualElement _disconnectedStateContainer;
+        private TextField _rpcHostInputField;
+        private Button _requestChallengeButton;
 
-    private VisualElement _disconnectedStateContainer;
-    private TextField _rpcHostInputField;
-    private Button _requestChallengeButton;
+        private VisualElement _awaitingChallengeStateContainer;
+        private Label _identityPromptLabel;
+        private TextField _challengeCodeInputField;
+        private Button _challengeButton;
+        private Button _cancelChallengeButton;
 
-    private VisualElement _awaitingChallengeStateContainer;
-    private Label _identityPromptLabel;
-    private TextField _challengeCodeInputField;
-    private Button _challengeButton;
-    private Button _cancelChallengeButton;
+        private VisualElement _connectedStateContainer;
+        private Button _disconnectButton;
 
-    private VisualElement _connectedStateContainer;
-    private Button _disconnectButton;
+        private Label _stateDisplayLabel;
+        private Label _clientIdLabel;
 
-    private Label _stateDisplayLabel;
-    private Label _clientIdLabel;
+        private Toggle _enableContentManagerPublishFlowToggle;
 
-    private Toggle _enableContentManagerPublishFlowToggle;
+        [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
+        [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
+        public static void ShowSettings() {
+            var window = GetWindow<ContentManagerSettingsWindow>();
+            window.titleContent = new GUIContent("Connect Settings");
+        }
 
-    [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
-    [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
-    public static void ShowSettings() {
-        var window = GetWindow<ContentManagerSettingsWindow>();
-        window.titleContent = new GUIContent("Connect Settings");
-    }
+        public void CreateGUI() {
+            var root = rootVisualElement;
+            var content = m_VisualTreeAsset.Instantiate();
 
-    public void CreateGUI() {
-        var root = rootVisualElement;
-        var visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(VisualTreeAssetPath);
-        var content = visualTreeAsset.Instantiate();
+            root.Add(content);
 
-        root.Add(content);
+            _disconnectedStateContainer = content.Q<VisualElement>("disconnected-state-container");
+            _rpcHostInputField = content.Q<TextField>("host-inputfield");
+            _requestChallengeButton = content.Q<Button>("request-challenge-button");
 
-        _disconnectedStateContainer = content.Q<VisualElement>("disconnected-state-container");
-        _rpcHostInputField = content.Q<TextField>("host-inputfield");
-        _requestChallengeButton = content.Q<Button>("request-challenge-button");
+            _awaitingChallengeStateContainer = content.Q<VisualElement>("challenge-state-container");
+            _identityPromptLabel = content.Q<Label>("identity-prompt-label");
+            _challengeCodeInputField = content.Q<TextField>("code-inputfield");
+            _challengeButton = content.Q<Button>("challenge-button");
+            _cancelChallengeButton = content.Q<Button>("cancel-challenge-button");
 
-        _awaitingChallengeStateContainer = content.Q<VisualElement>("challenge-state-container");
-        _identityPromptLabel = content.Q<Label>("identity-prompt-label");
-        _challengeCodeInputField = content.Q<TextField>("code-inputfield");
-        _challengeButton = content.Q<Button>("challenge-button");
-        _cancelChallengeButton = content.Q<Button>("cancel-challenge-button");
+            _connectedStateContainer = content.Q<VisualElement>("connected-state-container");
+            _disconnectButton = content.Q<Button>("disconnect-button");
 
-        _connectedStateContainer = content.Q<VisualElement>("connected-state-container");
-        _disconnectButton = content.Q<Button>("disconnect-button");
+            _stateDisplayLabel = content.Q<Label>("state-display-label");
+            _clientIdLabel = content.Q<Label>("client-id-label");
 
-        _stateDisplayLabel = content.Q<Label>("state-display-label");
-        _clientIdLabel = content.Q<Label>("client-id-label");
+            _enableContentManagerPublishFlowToggle = content.Q<Toggle>("enable-content-manager-toggle");
 
-        _enableContentManagerPublishFlowToggle = content.Q<Toggle>("enable-content-manager-toggle");
+            if (ConnectEditorApp.Instance is not { } app)
+                return;
 
-        if (ConnectEditorApp.Instance is not { } app)
-            return;
+            var rpcClientService = app.ServiceProvider.GetRequiredService<RpcClientService>();
 
-        var rpcClientService = app.ServiceProvider.GetRequiredService<RpcClientService>();
+            EditorApplication.update += () => UpdateConnectionState(rpcClientService);
+            UpdateConnectionState(rpcClientService);
 
-        EditorApplication.update += () => UpdateConnectionState(rpcClientService);
-        UpdateConnectionState(rpcClientService);
+            rpcClientService.IdentityPromptChanged += (_, prompt) => { _identityPromptLabel.text = prompt; };
+            _identityPromptLabel.text = rpcClientService.GetIdentityPrompt() ?? "";
 
-        rpcClientService.IdentityPromptChanged += (_, prompt) => { _identityPromptLabel.text = prompt; };
-        _identityPromptLabel.text = rpcClientService.GetIdentityPrompt() ?? "";
+            _clientIdLabel.text = rpcClientService.GetClientId();
 
-        _clientIdLabel.text = rpcClientService.GetClientId();
+            _requestChallengeButton.clicked += async () => {
+                await rpcClientService.RequestChallengeAsync(_rpcHostInputField.value);
+            };
 
-        _requestChallengeButton.clicked += async () => {
-            await rpcClientService.RequestChallengeAsync(_rpcHostInputField.value);
-        };
+            _challengeButton.clicked += async () => {
+                await rpcClientService.CompleteChallengeAsync(_challengeCodeInputField.value);
+            };
 
-        _challengeButton.clicked += async () => {
-            await rpcClientService.CompleteChallengeAsync(_challengeCodeInputField.value);
-        };
+            _disconnectButton.clicked += async () => { await rpcClientService.DisconnectAsync(); };
+            _cancelChallengeButton.clicked += async () => { await rpcClientService.DisconnectAsync(); };
 
-        _disconnectButton.clicked += async () => { await rpcClientService.DisconnectAsync(); };
-        _cancelChallengeButton.clicked += async () => { await rpcClientService.DisconnectAsync(); };
+            var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
 
-        var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
+            _enableContentManagerPublishFlowToggle.value = settings.GetSettings().UseContentManager;
+            _enableContentManagerPublishFlowToggle.RegisterValueChangedCallback(args => {
+                settings.GetSettings().UseContentManager = args.newValue;
+                settings.SaveSettings();
+            });
+        }
 
-        _enableContentManagerPublishFlowToggle.value = settings.GetSettings().UseContentManager;
-        _enableContentManagerPublishFlowToggle.RegisterValueChangedCallback(args => {
-            settings.GetSettings().UseContentManager = args.newValue;
-            settings.SaveSettings();
-        });
-    }
+        private void UpdateConnectionState(RpcClientService rpcClientService) {
+            var state = rpcClientService.State;
+            _stateDisplayLabel.text = state.ToString();
 
-    private void UpdateConnectionState(RpcClientService rpcClientService) {
-        var state = rpcClientService.State;
-        _stateDisplayLabel.text = state.ToString();
+            _disconnectedStateContainer.style.display = DisplayStyle.None;
+            _awaitingChallengeStateContainer.style.display = DisplayStyle.None;
+            _connectedStateContainer.style.display = DisplayStyle.None;
 
-        _disconnectedStateContainer.style.display = DisplayStyle.None;
-        _awaitingChallengeStateContainer.style.display = DisplayStyle.None;
-        _connectedStateContainer.style.display = DisplayStyle.None;
-
-        switch (state) {
-            case RpcClientState.AwaitingChallenge:
-                _awaitingChallengeStateContainer.style.display = DisplayStyle.Flex;
-                break;
-            case RpcClientState.Connected:
-                _connectedStateContainer.style.display = DisplayStyle.Flex;
-                break;
-            case RpcClientState.Disconnected:
-            default:
-                _disconnectedStateContainer.style.display = DisplayStyle.Flex;
-                break;
+            switch (state) {
+                case RpcClientState.AwaitingChallenge:
+                    _awaitingChallengeStateContainer.style.display = DisplayStyle.Flex;
+                    break;
+                case RpcClientState.Connected:
+                    _connectedStateContainer.style.display = DisplayStyle.Flex;
+                    break;
+                case RpcClientState.Disconnected:
+                default:
+                    _disconnectedStateContainer.style.display = DisplayStyle.Flex;
+                    break;
+            }
         }
     }
 }
