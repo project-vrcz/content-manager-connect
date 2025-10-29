@@ -31,14 +31,13 @@ namespace VRChatContentManagerConnect.Editor.Views {
         [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
         [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
         public static void ShowSettings() {
-            GetWindow<ContentManagerSettingsWindow>();
+            var window = GetWindow<ContentManagerSettingsWindow>();
+            window.titleContent = new GUIContent("Connect Settings");
         }
 
         public void CreateGUI() {
             var root = rootVisualElement;
             var content = m_VisualTreeAsset.Instantiate();
-            
-            titleContent = new GUIContent("Connect Settings");
 
             root.Add(content);
 
@@ -113,8 +112,6 @@ namespace VRChatContentManagerConnect.Editor.Views {
                     _disconnectedStateContainer.style.display = DisplayStyle.Flex;
                     break;
             }
-
-            titleContent = new GUIContent($"[{state}] Connect Settings");
         }
     }
 }
