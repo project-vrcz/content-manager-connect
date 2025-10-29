@@ -3,7 +3,8 @@
     "rootNamespace": "VRChatContentManagerConnect.Worlds.Editor",
     "references": [
         "GUID:0c9bad51c4b14e6d823198f69a8b83a4",
-        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05"
+        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05",
+        "GUID:1b3abf7e59395d84c84b48d69677daaa"
     ],
     "includePlatforms": [
         "Editor"
@@ -21,6 +22,12 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.vrchat.worlds",
+            "expression": "3.7.2",
+            "define": "VCCM_WORLD_SDK_3_7_2_OR_NEWER"
+        }
+    ],
     "noEngineReferences": false
 }

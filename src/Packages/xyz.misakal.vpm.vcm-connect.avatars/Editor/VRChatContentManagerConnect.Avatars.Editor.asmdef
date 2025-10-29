@@ -3,7 +3,8 @@
     "rootNamespace": "VRChatContentManagerConnect.Avatars.Editor",
     "references": [
         "GUID:0c9bad51c4b14e6d823198f69a8b83a4",
-        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05"
+        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05",
+        "GUID:b906909fcc54f634db50f2cad0f988d9"
     ],
     "includePlatforms": [
         "Editor"
@@ -21,6 +22,12 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.vrchat.avatars",
+            "expression": "3.7.6",
+            "define": "VCCM_AVATAR_SDK_3_7_6_OR_NEWER"
+        }
+    ],
     "noEngineReferences": false
 }
