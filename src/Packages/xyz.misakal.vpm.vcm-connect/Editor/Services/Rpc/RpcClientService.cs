@@ -101,6 +101,8 @@ internal sealed class RpcClientService {
     }
 
     public async Task CompleteChallengeAsync(string code) {
+        if (State != RpcClientState.AwaitingChallenge)
+            throw new InvalidOperationException("Client is not awaiting a challenge.");
         if (_baseUrl is null)
             throw new InvalidOperationException("Base URL is not set. Call RequestChallengeAsync first.");
         if (_identityPrompt is null)
@@ -146,11 +148,11 @@ internal sealed class RpcClientService {
     }
 
     internal async ValueTask<string> UploadFileAsync(string filePath, string fileName) {
-        var fileStream = File.OpenRead(filePath);
+        await using var fileStream = File.OpenRead(filePath);
 
-        var content = new MultipartFormDataContent();
+        using var content = new MultipartFormDataContent();
 
-        var fileContent = new StreamContent(fileStream);
+        using var fileContent = new StreamContent(fileStream);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
         content.Add(fileContent, "file", fileName);
@@ -194,6 +196,8 @@ internal sealed class RpcClientService {
     }
 
     internal async ValueTask<HttpResponseMessage> SendAsync(HttpRequestMessage request) {
+        if (State != RpcClientState.Connected)
+            throw new InvalidOperationException("Client is not connected.");
         if (_baseUrl is null)
             throw new InvalidOperationException("Base URL is not set. Call RequestChallengeAsync first.");
         if (_token is null)
