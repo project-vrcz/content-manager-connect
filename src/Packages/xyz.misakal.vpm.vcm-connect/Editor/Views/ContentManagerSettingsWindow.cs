@@ -96,6 +96,9 @@ namespace VRChatContentManagerConnect.Editor.Views {
             var state = rpcClientService.State;
             _stateDisplayLabel.text = state.ToString();
 
+            if (rpcClientService.InstanceName is not null)
+                _stateDisplayLabel.text += " - " + rpcClientService.InstanceName;
+
             _disconnectedStateContainer.style.display = DisplayStyle.None;
             _awaitingChallengeStateContainer.style.display = DisplayStyle.None;
             _connectedStateContainer.style.display = DisplayStyle.None;
