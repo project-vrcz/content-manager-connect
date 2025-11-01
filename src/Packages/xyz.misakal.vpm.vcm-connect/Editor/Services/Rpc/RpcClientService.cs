@@ -20,6 +20,7 @@ internal sealed class RpcClientService {
     public event EventHandler<string>? IdentityPromptChanged;
 
     public RpcClientState State { get; private set; } = RpcClientState.Disconnected;
+    public string? InstanceName { get; private set; }
 
     private readonly string _clientId;
 
@@ -52,20 +53,23 @@ internal sealed class RpcClientService {
         }
 
         var hostUri = new Uri(session.Host);
+        var metadata = await GetMetadataAsync(hostUri);
+        
         var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/auth/metadata"));
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Token);
 
         var response = await _httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
-        var metadata = await response.Content.ReadFromJsonAsync<AuthMetadataResponse>();
-        if (metadata is null)
+        var authMetadata = await response.Content.ReadFromJsonAsync<AuthMetadataResponse>();
+        if (authMetadata is null)
             throw new Exception("Invalid response from server.");
 
         _httpClient.BaseAddress = hostUri;
         _token = session.Token;
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
         _baseUrl = hostUri;
+        InstanceName = metadata.InstanceName;
 
         ChangeState(RpcClientState.Connected);
     }
@@ -78,10 +82,25 @@ internal sealed class RpcClientService {
         return _identityPrompt;
     }
 
+    private async ValueTask<MetadataResponse> GetMetadataAsync(Uri hostUri) {
+        var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/meta"));
+        var response = await _httpClient.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+
+        var responseBody = await response.Content.ReadFromJsonAsync<MetadataResponse>(_serializerOptions);
+        if (responseBody is null)
+            throw new Exception("Invalid response from server.");
+
+        return responseBody;
+    }
+
     public async ValueTask<string> RequestChallengeAsync(string baseUrl) {
         await DisconnectAsync();
 
         var baseUri = new Uri(baseUrl);
+        
+        var metadata = await GetMetadataAsync(baseUri);
 
         var identityPrompt = SetRandomIdentityPrompt();
 
@@ -94,6 +113,7 @@ internal sealed class RpcClientService {
         }
 
         _baseUrl = baseUri;
+        InstanceName = metadata.InstanceName;
         _httpClient.BaseAddress = baseUri;
         ChangeState(RpcClientState.AwaitingChallenge);
 
