@@ -29,7 +29,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
 
             var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
             if (!settings.GetSettings().UseContentManager)
-                return false;
+                return true;
 
             var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
             if (rpcClient.State != RpcClientState.Connected) {
