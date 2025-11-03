@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace VRChatContentManagerConnect.Editor.Views {
         private VisualElement _disconnectedStateContainer;
         private TextField _rpcHostInputField;
         private Button _requestChallengeButton;
+        private Button _tryRestoreLastSessionButton;
 
         private VisualElement _awaitingChallengeStateContainer;
         private Label _identityPromptLabel;
@@ -44,6 +46,7 @@ namespace VRChatContentManagerConnect.Editor.Views {
             _disconnectedStateContainer = content.Q<VisualElement>("disconnected-state-container");
             _rpcHostInputField = content.Q<TextField>("host-inputfield");
             _requestChallengeButton = content.Q<Button>("request-challenge-button");
+            _tryRestoreLastSessionButton = content.Q<Button>("try-restore-session-button");
 
             _awaitingChallengeStateContainer = content.Q<VisualElement>("challenge-state-container");
             _identityPromptLabel = content.Q<Label>("identity-prompt-label");
@@ -74,6 +77,20 @@ namespace VRChatContentManagerConnect.Editor.Views {
 
             _requestChallengeButton.clicked += async () => {
                 await rpcClientService.RequestChallengeAsync(_rpcHostInputField.value);
+            };
+
+            _tryRestoreLastSessionButton.clicked += async () => {
+                try {
+                    await rpcClientService.RestoreSessionAsync();
+                }
+                catch (Exception ex) {
+                    Debug.LogError("Failed to restore last session: " + ex.Message);
+                    Debug.LogException(ex);
+
+                    EditorUtility.DisplayDialog("Failed to Restore Session",
+                        "Could not restore the last session. Please try connecting again.\n\nError: " + ex,
+                        "Ok");
+                }
             };
 
             _challengeButton.clicked += async () => {

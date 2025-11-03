@@ -15,6 +15,7 @@
         <engine:VisualElement name="disconnected-state-container">
             <engine:TextField name="host-inputfield" label="Host" value="http://localhost:59328" />
             <engine:Button class="large-button" name="request-challenge-button" text="Request" />
+            <engine:Button class="large-button" name="try-restore-session-button" text="Try Restore last session" />
         </engine:VisualElement>
 
         <engine:VisualElement name="challenge-state-container">
