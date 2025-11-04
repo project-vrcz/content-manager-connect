@@ -36,5 +36,6 @@
 
     <engine:VisualElement>
         <engine:Toggle name="enable-content-manager-toggle" text="Enable Content Manager Publish Flow" />
+        <engine:TextField name="client-name-inputfield" label="Client Name" />
     </engine:VisualElement>
 </engine:UXML>

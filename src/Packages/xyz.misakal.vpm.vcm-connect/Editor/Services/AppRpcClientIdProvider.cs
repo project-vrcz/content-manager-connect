@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentManagerConnect.Editor.Utils;
 
 namespace VRChatContentManagerConnect.Editor.Services;
 
@@ -17,5 +18,26 @@ internal sealed class AppRpcClientIdProvider : IRpcClientIdProvider {
         }
 
         return File.ReadAllText(clientIdFile);
+    }
+
+    public string GetClientName() {
+        var clientNameFile = GetClientNameFilePath();
+
+        if (!File.Exists(clientNameFile)) {
+            var clientName = RandomWordsUtils.GetRandomWords();
+            File.WriteAllText(clientNameFile, clientName);
+
+            return clientName;
+        }
+
+        return File.ReadAllText(clientNameFile);
+    }
+
+    public void SetClientName(string name) {
+        File.WriteAllText(GetClientNameFilePath(), name);
+    }
+
+    private string GetClientNameFilePath() {
+        return Path.Combine(AppStorageService.GetStoragePath(), "client-name");
     }
 }

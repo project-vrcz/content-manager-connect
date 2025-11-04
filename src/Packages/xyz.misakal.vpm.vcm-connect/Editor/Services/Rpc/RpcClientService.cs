@@ -23,6 +23,7 @@ internal sealed class RpcClientService {
     public string? InstanceName { get; private set; }
 
     private readonly string _clientId;
+    private readonly IRpcClientIdProvider _clientIdProvider;
 
     private readonly IRpcClientSessionProvider _sessionProvider;
     private string? _token;
@@ -37,6 +38,7 @@ internal sealed class RpcClientService {
     };
 
     public RpcClientService(IRpcClientIdProvider clientIdProvider, IRpcClientSessionProvider sessionProvider) {
+        _clientIdProvider = clientIdProvider;
         _sessionProvider = sessionProvider;
         _clientId = clientIdProvider.GetClientId();
         _httpClient = new HttpClient();
@@ -105,7 +107,7 @@ internal sealed class RpcClientService {
         var identityPrompt = SetRandomIdentityPrompt();
 
         var requestUri = new Uri(baseUri, "/v1/auth/request-challenge");
-        var requestBody = new RequestChallengeRequest(_clientId, identityPrompt);
+        var requestBody = new RequestChallengeRequest(_clientId, identityPrompt, _clientIdProvider.GetClientName());
         var response = await _httpClient.PostAsJsonAsync(requestUri, requestBody, _serializerOptions);
 
         if (response.StatusCode != HttpStatusCode.NoContent) {
