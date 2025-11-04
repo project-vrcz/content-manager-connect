@@ -6,5 +6,7 @@ internal record RequestChallengeRequest(
     [property: JsonPropertyName("ClientId")]
     string ClientId,
     [property: JsonPropertyName("IdentityPrompt")]
-    string IdentityPrompt
+    string IdentityPrompt,
+    [property: JsonPropertyName("ClientName")]
+    string ClientName
 );

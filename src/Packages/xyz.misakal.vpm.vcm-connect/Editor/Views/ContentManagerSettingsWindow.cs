@@ -29,6 +29,7 @@ namespace VRChatContentManagerConnect.Editor.Views {
         private Label _clientIdLabel;
 
         private Toggle _enableContentManagerPublishFlowToggle;
+        private TextField _clientNameInputFIeld;
 
         [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
         [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
@@ -61,11 +62,13 @@ namespace VRChatContentManagerConnect.Editor.Views {
             _clientIdLabel = content.Q<Label>("client-id-label");
 
             _enableContentManagerPublishFlowToggle = content.Q<Toggle>("enable-content-manager-toggle");
+            _clientNameInputFIeld = content.Q<TextField>("client-name-inputfield");
 
             if (ConnectEditorApp.Instance is not { } app)
                 return;
 
             var rpcClientService = app.ServiceProvider.GetRequiredService<RpcClientService>();
+            var rpcClientIdProvider = app.ServiceProvider.GetRequiredService<IRpcClientIdProvider>();
 
             EditorApplication.update += () => UpdateConnectionState(rpcClientService);
             UpdateConnectionState(rpcClientService);
@@ -106,6 +109,11 @@ namespace VRChatContentManagerConnect.Editor.Views {
             _enableContentManagerPublishFlowToggle.RegisterValueChangedCallback(args => {
                 settings.GetSettings().UseContentManager = args.newValue;
                 settings.SaveSettings();
+            });
+
+            _clientNameInputFIeld.value = rpcClientIdProvider.GetClientName();
+            _clientNameInputFIeld.RegisterValueChangedCallback(args => {
+                rpcClientIdProvider.SetClientName(args.newValue);
             });
         }
 
