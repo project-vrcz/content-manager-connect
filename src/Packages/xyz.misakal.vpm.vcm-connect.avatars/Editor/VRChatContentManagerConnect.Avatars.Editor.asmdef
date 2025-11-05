@@ -27,6 +27,11 @@
             "name": "com.vrchat.avatars",
             "expression": "3.7.6",
             "define": "VCCM_AVATAR_SDK_3_7_6_OR_NEWER"
+        },
+        {
+            "name": "com.anatawa12.continuous-avatar-uploader",
+            "expression": "[0.3.8,0.3.11]",
+            "define": "VCCM_SUPPORTED_CAU_VERSION"
         }
     ],
     "noEngineReferences": false
