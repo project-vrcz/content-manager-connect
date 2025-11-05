@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -35,6 +37,7 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                 Debug.LogError("Failed to Build and Upload: VRChat Content Manager Connect is not initialized.");
                 __result = Task.FromException(
                     new InvalidOperationException("VRChat Content Manager Connect is not initialized."));
+                TryStopContinuousAvatarUploader();
                 return false;
             }
 
@@ -46,10 +49,63 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
             if (rpcClient.State != RpcClientState.Connected) {
                 Debug.LogError("Failed to Build and Upload: RPC Client is not connected.");
                 __result = Task.FromException(new InvalidOperationException("RPC Client is not connected."));
+                TryStopContinuousAvatarUploader();
                 return false;
             }
 
             return true;
+        }
+
+        private static void TryStopContinuousAvatarUploader() {
+        #if VCCM_SUPPORTED_CAU_VERSION
+            var cauAssembly = AccessTools.AllAssemblies()
+                .FirstOrDefault(assembly =>
+                    assembly.GetName().Name == "com.anatawa12.continuous-avatar-uploader.editor");
+
+            if (cauAssembly is null) {
+                Debug.LogWarning("[VRCCM.Connect] CAU assembly not found.");
+                return;
+            }
+
+            var uploadOrchestratorType =
+                cauAssembly.GetType("Anatawa12.ContinuousAvatarUploader.Editor.UploadOrchestrator");
+            if (uploadOrchestratorType is null) {
+                Debug.LogWarning("[VRCCM.Connect] CAU UploadOrchestrator type not found.");
+                return;
+            }
+
+            var isUploadInProgressMethod = uploadOrchestratorType.GetMethod(
+                "IsUploadInProgress",
+                0,
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+                null,
+                Type.EmptyTypes,
+                Array.Empty<ParameterModifier>());
+            var cancelUploadsMethod = uploadOrchestratorType.GetMethod(
+                "CancelUpload",
+                0,
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+                null,
+                Type.EmptyTypes,
+                Array.Empty<ParameterModifier>());
+
+            if (isUploadInProgressMethod is null || isUploadInProgressMethod.ReturnType != typeof(bool)) {
+                Debug.LogWarning("[VRCCM.Connect] CAU static bool IsUploadInProgress() method not found.");
+                return;
+            }
+
+            if (cancelUploadsMethod is null) {
+                Debug.LogWarning("[VRCCM.Connect] CAU static CancelUpload() method not found.");
+                return;
+            }
+
+            var isUploadInProgress = (bool)isUploadInProgressMethod.Invoke(null, Array.Empty<object>());
+            if (!isUploadInProgress)
+                return;
+
+            Debug.Log("[VRCCM.Connect] Detected ongoing CAU upload. Cancelling CAU upload.");
+            cancelUploadsMethod.Invoke(null, Array.Empty<object>());
+        #endif
         }
     }
 }
