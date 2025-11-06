@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -9,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityEngine;
 using VRC.SDK3A.Editor;
 using VRC.SDKBase.Editor.Api;
+using VRChatContentManagerConnect.Avatars.Editor.Utils;
 using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
@@ -31,13 +30,13 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         typeof(GameObject), typeof(VRCAvatar),
         typeof(string), typeof(CancellationToken))]
 #endif
-    internal static class AvatarBuilderApiPatch {
+    internal static class AvatarBuilderBuildAndUploadApiPatch {
         public static bool Prefix(ref Task __result) {
             if (ConnectEditorApp.Instance is not { } app) {
                 Debug.LogError("Failed to Build and Upload: VRChat Content Manager Connect is not initialized.");
                 __result = Task.FromException(
                     new InvalidOperationException("VRChat Content Manager Connect is not initialized."));
-                TryStopContinuousAvatarUploader();
+                CauUtils.TryStopContinuousAvatarUploader();
                 return false;
             }
 
@@ -49,63 +48,11 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
             if (rpcClient.State != RpcClientState.Connected) {
                 Debug.LogError("Failed to Build and Upload: RPC Client is not connected.");
                 __result = Task.FromException(new InvalidOperationException("RPC Client is not connected."));
-                TryStopContinuousAvatarUploader();
+                CauUtils.TryStopContinuousAvatarUploader();
                 return false;
             }
 
             return true;
-        }
-
-        private static void TryStopContinuousAvatarUploader() {
-        #if VCCM_SUPPORTED_CAU_VERSION
-            var cauAssembly = AccessTools.AllAssemblies()
-                .FirstOrDefault(assembly =>
-                    assembly.GetName().Name == "com.anatawa12.continuous-avatar-uploader.editor");
-
-            if (cauAssembly is null) {
-                Debug.LogWarning("[VRCCM.Connect] CAU assembly not found.");
-                return;
-            }
-
-            var uploadOrchestratorType =
-                cauAssembly.GetType("Anatawa12.ContinuousAvatarUploader.Editor.UploadOrchestrator");
-            if (uploadOrchestratorType is null) {
-                Debug.LogWarning("[VRCCM.Connect] CAU UploadOrchestrator type not found.");
-                return;
-            }
-
-            var isUploadInProgressMethod = uploadOrchestratorType.GetMethod(
-                "IsUploadInProgress",
-                0,
-                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
-                null,
-                Type.EmptyTypes,
-                Array.Empty<ParameterModifier>());
-            var cancelUploadsMethod = uploadOrchestratorType.GetMethod(
-                "CancelUpload",
-                0,
-                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
-                null,
-                Type.EmptyTypes,
-                Array.Empty<ParameterModifier>());
-
-            if (isUploadInProgressMethod is null || isUploadInProgressMethod.ReturnType != typeof(bool)) {
-                Debug.LogWarning("[VRCCM.Connect] CAU static bool IsUploadInProgress() method not found.");
-                return;
-            }
-
-            if (cancelUploadsMethod is null) {
-                Debug.LogWarning("[VRCCM.Connect] CAU static CancelUpload() method not found.");
-                return;
-            }
-
-            var isUploadInProgress = (bool)isUploadInProgressMethod.Invoke(null, Array.Empty<object>());
-            if (!isUploadInProgress)
-                return;
-
-            Debug.Log("[VRCCM.Connect] Detected ongoing CAU upload. Cancelling CAU upload.");
-            cancelUploadsMethod.Invoke(null, Array.Empty<object>());
-        #endif
         }
     }
 }
