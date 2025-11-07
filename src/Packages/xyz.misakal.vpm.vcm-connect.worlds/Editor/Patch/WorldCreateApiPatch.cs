@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEngine;
-using VRC;
 using VRC.Core;
 using VRC.SDKBase.Editor.Api;
 using VRChatContentManagerConnect.Editor;
@@ -14,22 +13,22 @@ using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
-    // public static async Task<VRCWorld> UpdateWorldBundle(
-    // string id, VRCWorld data, string pathToBundle, string worldSignature, 
+    // public static async Task<VRCWorld> CreateNewWorld(
+    // string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
     // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateWorldBundle),
-        typeof(string), typeof(VRCWorld), typeof(string), typeof(string),
+    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.CreateNewWorld),
+        typeof(string), typeof(VRCWorld), typeof(string), typeof(string), typeof(string),
         typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class WorldBundleUploadApiPatch {
+    internal static class WorldCreateApiPatch {
         internal static bool Prefix(ref Task<VRCWorld> __result,
-            string id, VRCWorld data, string pathToBundle, string worldSignature,
+            string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default
         ) {
             var app = ConnectEditorApp.Instance;
             if (app == null) {
-                Debug.LogWarning(
-                    "[VRCCM.Connect] AvatarBundleUploadApiPatch: ConnectEditorApp instance is null. Skipping patch.");
+                UnityEngine.Debug.LogWarning(
+                    "[VRCCM.Connect] WorldCreateApiPatch: ConnectEditorApp instance is null. Skipping patch.");
                 return true;
             }
 
@@ -41,59 +40,58 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 if (string.IsNullOrEmpty(id))
                     throw new ArgumentNullException(nameof(id), "World ID cannot be null or empty.");
 
-                if (string.IsNullOrEmpty(pathToBundle))
-                    throw new ArgumentNullException(nameof(pathToBundle), "Path to bundle cannot be null or empty.");
+                if (string.IsNullOrWhiteSpace(pathToBundle) || string.IsNullOrWhiteSpace(pathToImage)) {
+                    throw new ArgumentException("Path to bundle or image cannot be null or empty.");
+                }
 
                 if (cancellationToken.IsCancellationRequested)
                     cancellationToken.ThrowIfCancellationRequested();
 
-                if (!File.Exists(pathToBundle))
-                    throw new FileNotFoundException("The specified bundle file does not exist.", pathToBundle);
-
-                var bundleFileName = "World - " + data.Name + " - Asset bundle - " + Application.unityVersion + "_" +
-                                     ApiWorld.VERSION.ApiVersion +
-                                     "_" + Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl();
-
-                Debug.Log($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
-
                 var currentUserId = APIUser.CurrentUser?.id;
                 if (currentUserId is null)
                     throw new InvalidOperationException("Current user is not logged in.");
-                
-                // Send Bundle File to App, Start new task
+
+                // Send Create Avatar Request to App, Start new task
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 if (rpcClient.State == RpcClientState.Disconnected) {
-                    Debug.Log("[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
-                    
+                    Debug.Log(
+                        "[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
+
                     try {
                         await rpcClient.RestoreSessionAsync();
-                        Debug.Log("[VRCCM.Connect] RPC session restored successfully.");
                     }
                     catch (Exception ex) {
-                        Debug.LogException(ex);
-                        Debug.LogError("[VRCCM.Connect] Failed to restore RPC session. Aborting world bundle upload.");
-                        
-                        throw new InvalidOperationException("RPC client is not connected.", ex);
+                        Debug.LogError(
+                            $"[VRCCM.Connect] Failed to restore RPC session: {ex.Message}");
+                        throw;
                     }
                 }
 
-                if (rpcClient.State != RpcClientState.Connected) {
-                    throw new InvalidOperationException("RPC client is not connected.");
-                }
+                var bundleFileName = "World - " + data.Name + " - Asset bundle - " + Application.unityVersion + "_" +
+                                     ApiAvatar.VERSION.ApiVersion +
+                                     "_" + VRC.Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl();
+                var imageFileName = "World - " + data.Name + " - Thumbnail - " + Application.unityVersion + "_" +
+                                    ApiAvatar.VERSION.ApiVersion +
+                                    "_" + VRC.Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl() +
+                                    Path.GetExtension(pathToImage);
+
+                Debug.Log($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
 
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
                 Debug.Log("Bundle File Id: " + fileId);
+                var imageFileId = await rpcClient.UploadFileAsync(pathToImage, imageFileName);
+                Debug.Log("Image File Id: " + imageFileId);
 
                 await rpcClient.CreateWorldPublishTaskAsync(new CreateWorldPublishTaskRequest(
                     id,
                     fileId,
                     data.Name,
-                    Tools.Platform,
-                    Tools.UnityVersion.ToString(),
+                    VRC.Tools.Platform,
+                    VRC.Tools.UnityVersion.ToString(),
                     currentUserId,
                     worldSignature,
-                    null,
+                    imageFileId,
                     data.Description,
                     data.Tags.ToArray(),
                     data.ReleaseStatus,
@@ -101,12 +99,11 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                     data.RecommendedCapacity,
                     data.PreviewYoutubeId,
                     data.UdonProducts.ToArray()
-                    ));
+                ));
 
                 return data;
             });
 
-            // replace method
             return false;
         }
     }

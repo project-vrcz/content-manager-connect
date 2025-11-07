@@ -193,14 +193,9 @@ internal sealed class RpcClientService {
         return responseBody.FileId;
     }
 
-    internal async ValueTask CreateWorldPublishTaskAsync(
-        string worldId, string bundleFileId, string worldName, string platform, string unityVersion,
-        string? worldSignature) {
-        var requestBody =
-            new CreateWorldPublishTaskRequest(worldId, bundleFileId, worldName, platform, unityVersion, worldSignature);
-
+    internal async ValueTask CreateWorldPublishTaskAsync(CreateWorldPublishTaskRequest request) {
         var response = await SendAsync(new HttpRequestMessage(HttpMethod.Post, "/v1/tasks/world") {
-            Content = JsonContent.Create(requestBody)
+            Content = JsonContent.Create(request)
         });
         response.EnsureSuccessStatusCode();
     }
