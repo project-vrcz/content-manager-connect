@@ -31,6 +31,8 @@ namespace VRChatContentManagerConnect.Editor.Views {
         private Toggle _enableContentManagerPublishFlowToggle;
         private TextField _clientNameInputFIeld;
 
+        private VisualElement _upgradeWarningContainer;
+
         [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
         [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
         public static void ShowSettings() {
@@ -63,6 +65,14 @@ namespace VRChatContentManagerConnect.Editor.Views {
 
             _enableContentManagerPublishFlowToggle = content.Q<Toggle>("enable-content-manager-toggle");
             _clientNameInputFIeld = content.Q<TextField>("client-name-inputfield");
+
+            _upgradeWarningContainer = content.Q<VisualElement>("upgrade-warning-container");
+
+        #if VCCM_AVATAR_SDK_3_9_0_OR_NEWER
+            _upgradeWarningContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+        #else
+            _upgradeWarningContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+        #endif
 
             if (ConnectEditorApp.Instance is not { } app)
                 return;
