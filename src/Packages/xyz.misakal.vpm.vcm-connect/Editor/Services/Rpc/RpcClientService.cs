@@ -56,7 +56,7 @@ internal sealed class RpcClientService {
 
         var hostUri = new Uri(session.Host);
         var metadata = await GetMetadataAsync(hostUri);
-        
+
         var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/auth/metadata"));
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Token);
 
@@ -101,7 +101,7 @@ internal sealed class RpcClientService {
         await DisconnectAsync();
 
         var baseUri = new Uri(baseUrl);
-        
+
         var metadata = await GetMetadataAsync(baseUri);
 
         var identityPrompt = SetRandomIdentityPrompt();
@@ -206,9 +206,25 @@ internal sealed class RpcClientService {
     }
 
     internal async ValueTask CreateAvatarPublishTaskAsync(
-        string avatarId, string bundleFileId, string avatarName, string platform, string unityVersion) {
+        string avatarId,
+        string bundleFileId,
+        string avatarName,
+        string platform,
+        string unityVersion,
+        string? imageFileId = null,
+        string? description = null,
+        string[]? tags = null,
+        string? releaseStatus = null) {
         var requestBody =
-            new CreateAvatarPublishTaskRequest(avatarId, bundleFileId, avatarName, platform, unityVersion);
+            new CreateAvatarPublishTaskRequest(avatarId,
+                bundleFileId,
+                avatarName,
+                platform,
+                unityVersion,
+                imageFileId,
+                description,
+                tags,
+                releaseStatus);
 
         var response = await SendAsync(new HttpRequestMessage(HttpMethod.Post, "/v1/tasks/avatar") {
             Content = JsonContent.Create(requestBody)
