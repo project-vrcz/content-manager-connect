@@ -9,4 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Ability to Connect to VRChat Content Manager App.
+- Allow Create new Content. [`#17`](https://github.com/project-vrcz/content-manager-connect/pull/17)
+- Allow restore last session. [`#10`](https://github.com/project-vrcz/content-manager-connect/pull/10)
+- Show current connected VRChat Content Manager Instance Name. [`#6`](https://github.com/project-vrcz/content-manager-connect/pull/6)
+- Allow custom Client Name. [`#13`](https://github.com/project-vrcz/content-manager-connect/pull/13)
+- Cancel CAU Upload if use content manager publish flow enabled, and RPC connection is disconnected. [`#14`](https://github.com/project-vrcz/content-manager-connect/pull/14)
+
+## Fixed
+
+- Fix unable to build and upload when use Content Mangaer publish flow is disbaled. [`#8`](https://github.com/project-vrcz/content-manager-connect/pull/8)
+
 [unreleased]: https://github.com/project-vrcz/content-manager-connect
