@@ -18,5 +18,6 @@
     "vrchat"
   ],
   "vpmDependencies": {
+    "com.vrchat.base": "^3.7.0"
   }
 }
