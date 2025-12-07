@@ -1,0 +1,19 @@
+name: Make Packages on Push
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  make-package:
+    strategy:
+      matrix:
+        package:
+          - xyz.misakal.vpm.vcm-connect
+          - xyz.misakal.vpm.vcm-connect.avatars
+          - xyz.misakal.vpm.vcm-connect.worlds
+
+    uses: ./.github/workflows/make-package.yml
+    with:
+      ref: ${{ github.ref_name }}
+      package: ${{ matrix.package }}
