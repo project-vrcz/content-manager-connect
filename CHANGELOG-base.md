@@ -9,9 +9,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-## [0.1.0-beta.1] - 2025-12-07
-
-### Added
-
-[unreleased]: https://github.com/project-vrcz/content-manager-connect-workflow-playground/compare/base-v0.1.0-beta.1...HEAD
-[0.1.0-beta.1]: https://github.com/project-vrcz/content-manager-connect-workflow-playground/releases/tag/base-v0.1.0-beta.1
+[unreleased]: https://github.com/project-vrcz/content-manager-connect
