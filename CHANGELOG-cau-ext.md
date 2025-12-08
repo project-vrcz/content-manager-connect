@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2025-12-08
+
 ### Added
 
 - Show RPC Connection Status in CAU GUI.
 - Check RPC Connection Status before CAU upload start
   - Prevent upload if disconnected and use content manager publish flow is enabled.
 
-[unreleased]: https://github.com/project-vrcz/content-manager-connect/
+[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.0...HEAD
+[0.1.0]: https://github.com/project-vrcz/content-manager-connect/releases/tag/cau-ext-v0.1.0
