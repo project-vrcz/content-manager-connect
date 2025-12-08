@@ -29,6 +29,7 @@ on:
           - xyz.misakal.vpm.vcm-connect
           - xyz.misakal.vpm.vcm-connect.avatars
           - xyz.misakal.vpm.vcm-connect.worlds
+          - xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext
 
 env:
   path_to_repo: ${{ github.workspace }}/repo/

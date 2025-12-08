@@ -23,6 +23,7 @@ on:
           - xyz.misakal.vpm.vcm-connect
           - xyz.misakal.vpm.vcm-connect.avatars
           - xyz.misakal.vpm.vcm-connect.worlds
+          - xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext
 
 env:
   releasing_branch: releasing
@@ -62,6 +63,9 @@ jobs:
             "xyz.misakal.vpm.vcm-connect.worlds")
               short_name="worlds"
               ;;
+            "xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext")
+              short_name="cau-ext"
+              ;;
             *)
               echo "Unknown package: $PACKAGE_NAME"
               exit 1
@@ -90,6 +94,9 @@ jobs:
               ;;
             "xyz.misakal.vpm.vcm-connect.worlds")
               change_log_name="CHANGELOG-worlds.md"
+              ;;
+            "xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext")
+              change_log_name="CHANGELOG-cau-ext.md"
               ;;
             *)
               echo "Unknown package: $PACKAGE_NAME"
@@ -199,6 +206,9 @@ jobs:
               ;;
             "xyz.misakal.vpm.vcm-connect.worlds")
               short_name="worlds"
+              ;;
+            "xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext")
+              short_name="cau-ext"
               ;;
             *)
               echo "Unknown package: $PACKAGE_NAME"
