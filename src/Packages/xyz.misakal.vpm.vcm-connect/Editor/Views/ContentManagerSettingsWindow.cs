@@ -68,7 +68,7 @@ namespace VRChatContentManagerConnect.Editor.Views {
 
             _upgradeWarningContainer = content.Q<VisualElement>("upgrade-warning-container");
 
-        #if VCCM_AVATAR_SDK_3_9_0_OR_NEWER
+        #if !VCCM_AVATAR_SDK_EXIST || VCCM_AVATAR_SDK_3_9_0_OR_NEWER
             _upgradeWarningContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
         #else
             _upgradeWarningContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
