@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2025-12-08
+
 ### Added
 
 - Ability to Connect to VRChat Content Manager App.
@@ -36,5 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix unable to build and upload when use Content Mangaer publish flow is disbaled. [`#8`](https://github.com/project-vrcz/content-manager-connect/pull/8)
 
-[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.1.0-beta.1...HEAD
+[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.1.0...HEAD
+[0.1.0]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.1.0-beta.1...base-v0.1.0
 [0.1.0-beta.1]: https://github.com/project-vrcz/content-manager-connect/releases/tag/base-v0.1.0-beta.1
