@@ -18,7 +18,7 @@
     "vrchat"
   ],
   "vpmDependencies": {
-    "xyz.misakal.vpm.vcm-connect": "^0.1.0",
+    "xyz.misakal.vpm.vcm-connect": "^0.1.1",
     "com.anatawa12.continuous-avatar-uploader": "^v0.3.8-beta.1"
   }
 }
