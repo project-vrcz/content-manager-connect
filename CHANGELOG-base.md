@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Rename to `VRChat Content Manager Connect - Base` to avoid confuse. [`#33`](https://github.com/project-vrcz/content-manager-connect/pull/33)
+
 ### Added
 
 - Show Warning if both Avatars and Worlds Connect Packages are not installed. [`#31`](https://github.com/project-vrcz/content-manager-connect/pull/31)
