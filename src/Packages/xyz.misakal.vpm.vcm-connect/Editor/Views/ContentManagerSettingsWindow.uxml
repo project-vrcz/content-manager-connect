@@ -5,6 +5,11 @@
     <Style
         src="project://database/Packages/xyz.misakal.vpm.vcm-connect/Editor/Views/ContentManagerSettingsWindow.uss?fileID=7433441132597879392&amp;guid=2dafa2f7092cfa1489dee7c063cf1edb&amp;type=3#ContentMangaerSettingsWindow" />
 
+    <engine:VisualElement name="no-required-packages-installed-container">
+        <engine:HelpBox class="large-helpbox" message-type="Error"
+                        text="You didn't install worlds or avatars connect package.\nContent Manager Connect Won't WORK!" />
+    </engine:VisualElement>
+
     <engine:VisualElement>
         <engine:VisualElement class="connection-state-container">
             <engine:Label text="Connection to Content Manager App" />
@@ -36,8 +41,10 @@
 
     <engine:VisualElement>
         <engine:VisualElement name="upgrade-warning-container">
-            <engine:HelpBox message-type="Warning" text="Please Upgrade your SDK!\nAny Avatar SDK older than 3.9.0 won't be able to create new avatar in the future.\nSee VRChat Developer Update for more information: https://ask.vrchat.com/t/developer-update-23-october-2025/46983#p-85382-a-reminder-to-upgrade-to-the-latest-sdk-3" />
-            <engine:HelpBox message-type="Warning" text="When enable Content Manager Publish Flow in Avatar SDK older than 3.9.0, SDK will **always** upload uncompression bundle when create new avatar."/>
+            <engine:HelpBox message-type="Warning"
+                            text="Please Upgrade your SDK!\nAny Avatar SDK older than 3.9.0 won't be able to create new avatar in the future.\nSee VRChat Developer Update for more information: https://ask.vrchat.com/t/developer-update-23-october-2025/46983#p-85382-a-reminder-to-upgrade-to-the-latest-sdk-3" />
+            <engine:HelpBox message-type="Warning"
+                            text="When enable Content Manager Publish Flow in Avatar SDK older than 3.9.0, SDK will **always** upload uncompression bundle when create new avatar." />
         </engine:VisualElement>
         <engine:Toggle name="enable-content-manager-toggle" text="Enable Content Manager Publish Flow" />
         <engine:TextField name="client-name-inputfield" label="Client Name" />

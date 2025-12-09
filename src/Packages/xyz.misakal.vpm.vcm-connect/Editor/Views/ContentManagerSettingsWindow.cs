@@ -11,6 +11,8 @@ namespace VRChatContentManagerConnect.Editor.Views {
         [SerializeField]
         private VisualTreeAsset m_VisualTreeAsset = default;
 
+        private VisualElement _noRequiredPackageInstalledContainer;
+
         private VisualElement _disconnectedStateContainer;
         private TextField _rpcHostInputField;
         private Button _requestChallengeButton;
@@ -46,6 +48,8 @@ namespace VRChatContentManagerConnect.Editor.Views {
 
             root.Add(content);
 
+            _noRequiredPackageInstalledContainer = content.Q<VisualElement>("no-required-packages-installed-container");
+
             _disconnectedStateContainer = content.Q<VisualElement>("disconnected-state-container");
             _rpcHostInputField = content.Q<TextField>("host-inputfield");
             _requestChallengeButton = content.Q<Button>("request-challenge-button");
@@ -72,6 +76,12 @@ namespace VRChatContentManagerConnect.Editor.Views {
             _upgradeWarningContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
         #else
             _upgradeWarningContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
+        #endif
+
+        #if VCCM_AVATARS_PACKAGE_EXIST || VCCM_WORLDS_PACKAGE_EXIST
+            _noRequiredPackageInstalledContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.None);
+        #else
+            _noRequiredPackageInstalledContainer.style.display = new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
         #endif
 
             if (ConnectEditorApp.Instance is not { } app)
