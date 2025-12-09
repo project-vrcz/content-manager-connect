@@ -32,6 +32,16 @@
             "name": "com.vrchat.avatars",
             "expression": "",
             "define": "VCCM_AVATAR_SDK_EXIST"
+        },
+        {
+            "name": "xyz.misakal.vpm.vcm-connect.worlds",
+            "expression": "",
+            "define": "VCCM_WORLDS_PACKAGE_EXIST"
+        },
+        {
+            "name": "xyz.misakal.vpm.vcm-connect.avatars",
+            "expression": "",
+            "define": "VCCM_AVATARS_PACKAGE_EXIST"
         }
     ],
     "noEngineReferences": false
