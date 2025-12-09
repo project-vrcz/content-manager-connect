@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Show Warning if both Avatars and Worlds Connect Packages are not installed. [`#31`](https://github.com/project-vrcz/content-manager-connect/pull/31)
+
 ## [0.1.1] - 2025-12-08
 
 ### Added
