@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+    <Style src="ContentManagerSettingsView.uss" />
+
+    <engine:VisualElement class="window-container">
+        <engine:VisualElement class="warning-container">
+            <engine:VisualElement name="no-required-packages-installed-container">
+                <engine:HelpBox class="large-helpbox" message-type="Error"
+                                text="You didn't install worlds or avatars connect package.\nContent Manager Connect Won't WORK!" />
+            </engine:VisualElement>
+            <engine:VisualElement name="upgrade-warning-container">
+                <engine:HelpBox message-type="Warning"
+                                text="Please Upgrade your SDK!\nAny Avatar SDK older than 3.9.0 won't be able to create new avatar in the future.\nSee VRChat Developer Update for more information: https://ask.vrchat.com/t/developer-update-23-october-2025/46983#p-85382-a-reminder-to-upgrade-to-the-latest-sdk-3" />
+                <engine:HelpBox message-type="Warning"
+                                text="When enable Content Manager Publish Flow in Avatar SDK older than 3.9.0, SDK will **always** upload uncompression bundle when create new avatar." />
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement name="page-container">
+        </engine:VisualElement>
+
+        <engine:Box class="settings-container">
+            <engine:Label class="settings-header" text="Advance Settings" />
+            <engine:Toggle name="enable-content-manager-toggle" text="Enable Content Manager Publish Flow" />
+            <engine:TextField name="client-name-inputfield" label="Client Name" />
+            <engine:VisualElement class="client-id-container">
+                <engine:Label text="Client ID: "/>
+                <engine:Label name="client-id-label" text="CLIENT_ID" />
+            </engine:VisualElement>
+        </engine:Box>
+    </engine:VisualElement>
+</engine:UXML>

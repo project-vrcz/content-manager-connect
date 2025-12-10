@@ -1,0 +1,35 @@
+.large-helpbox > Label {
+    font-size: 18px;
+    -unity-font-style: bold;
+}
+
+.window-container {
+    display: flex;
+    height: 100%;
+}
+
+.warning-container {
+    flex: none;
+}
+
+#page-container {
+    flex: 1;
+}
+
+.settings-container {
+    padding: 8px;
+    flex: none;
+}
+
+.settings-header {
+    font-size: 18px;
+    -unity-font-style: bold;
+
+    margin-bottom: 8px;
+}
+
+.client-id-container {
+    flex-direction: row;
+    margin-top: 4px;
+    opacity: 0.6;
+}

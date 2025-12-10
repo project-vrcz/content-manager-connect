@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="ReconnectPage.uss" />
+
+    <engine:VisualElement class="reconnect-page-container">
+        <engine:Label class="reconnect-header" text="Restore Last Session" />
+        <engine:Label text="You have connect to this host last time, but we can't reconnect to this host." />
+        <engine:Label name="instance-host-url" text="Loading..." />
+        
+        <engine:Button class="primary-button" name="reconnect-button" text="Reconnect"/>
+        <engine:Button name="forget-button" text="Forget this instance and Connect to New Instance"/>
+    </engine:VisualElement>
+</engine:UXML>

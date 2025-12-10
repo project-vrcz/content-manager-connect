@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+
+    <engine:Style src="NewConnectionPage.uss" />
+
+    <engine:VisualElement class="new-connection-page-container">
+        <engine:Label class="page-header" text="Connect to VRChat Manager App" />
+
+        <engine:VisualElement name="connect-container">
+            <engine:TextField name="host-input-field" label="Host to Connect" value="http://localhost:59328" />
+            <engine:Button class="primary-button" name="connect-button" text="Connect" />
+        </engine:VisualElement>
+
+        <engine:VisualElement name="challenge-container">
+            <engine:VisualElement class="challenge-identity-prompt-container">
+                <engine:Label class="identity-prompt-header" text="Identity Prompt" />
+                <engine:Label name="identity-prompt-label" text="Waiting for UI" />
+                <engine:Label text="Enter the code displayed in App dialog, then click Challenge to connect." />
+            </engine:VisualElement>
+
+            <engine:TextField name="code-input-field" label="Code" />
+            <engine:Button class="primary-button" name="challenge-button" text="Challenge" />
+            <engine:Button name="cancel-challenge-button" text="Cancel" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
