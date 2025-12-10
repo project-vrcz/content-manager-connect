@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Brand new Settings UI. [`#37`](https://github.com/project-vrcz/content-manager-connect/pull/37)
+  - Better looking.
+  - Avoid confuse caused by old UI (e.g accidently forget App instance when reconnect failed).
+
 ## [0.1.2] - 2025-12-09
 
 ### Changed
