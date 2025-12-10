@@ -47,6 +47,10 @@ internal sealed class RpcClientService {
             new ProductInfoHeaderValue(new ProductHeaderValue("VRChatContentManager.ConnectEditorApp", "snapshot")));
     }
 
+    public async ValueTask<RpcClientSession?> GetLastSessionInfoAsync() {
+        return await _sessionProvider.GetSessionsAsync();
+    }
+
     public async Task RestoreSessionAsync() {
         var session = await _sessionProvider.GetSessionsAsync();
 

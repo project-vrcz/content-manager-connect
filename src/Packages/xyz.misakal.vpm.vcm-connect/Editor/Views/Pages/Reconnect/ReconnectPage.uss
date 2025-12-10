@@ -1,0 +1,22 @@
+.reconnect-page-container {
+    padding: 12px;
+}
+
+.reconnect-header {
+    font-size: 18px;
+    -unity-font-style: bold;
+
+    margin-bottom: 8px;
+}
+
+#instance-host-url {
+    font-size: 14px;
+}
+
+.primary-button {
+    font-size: 14px;
+    -unity-font-style: bold;
+
+    margin-top: 8px;
+    padding: 4px;
+}

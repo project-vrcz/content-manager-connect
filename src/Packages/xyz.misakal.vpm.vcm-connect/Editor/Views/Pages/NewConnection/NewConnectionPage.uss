@@ -1,0 +1,34 @@
+.new-connection-page-container {
+    padding: 12px;
+}
+
+.page-header {
+    font-size: 18px;
+    -unity-font-style: bold;
+
+    margin-bottom: 8px;
+}
+
+.primary-button {
+    font-size: 14px;
+    -unity-font-style: bold;
+
+    margin-top: 8px;
+    padding: 4px;
+}
+
+.challenge-identity-prompt-container {
+    display: flex;
+    align-items: center;
+    
+    padding: 12px;
+}
+
+.identity-prompt-header {
+    font-size: 14px;
+}
+
+#identity-prompt-label {
+    font-size: 24px;
+    -unity-font-style: bold;
+}

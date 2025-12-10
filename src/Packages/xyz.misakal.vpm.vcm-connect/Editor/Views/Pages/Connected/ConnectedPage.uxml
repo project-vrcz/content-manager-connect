@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements">
+    <engine:Style src="ConnectedPage.uss" />
+
+    <engine:VisualElement class="connected-page-container">
+        <engine:VisualElement>
+            <engine:Label class="connected-header" text="Connected to" />
+            <engine:Label name="instance-name" text="Instance Name" />
+        </engine:VisualElement>
+
+        <engine:VisualElement>
+            <engine:Button name="disconnect-button" class="primary-button" text="Disconnect and Forget this Instance" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
