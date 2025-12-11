@@ -89,7 +89,7 @@ internal sealed class NewConnectionPage : VisualElement {
 
         _cancelChallengeButton.clicked += async () => {
             try {
-                await _rpcClientService.DisconnectAsync();
+                await _rpcClientService.ForgetAndDisconnectAsync();
             }
             catch (Exception ex) {
                 Debug.LogError("Failed to cancel challenge: " + ex);
