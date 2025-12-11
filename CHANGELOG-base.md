@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Smart pre upload check logic (For CAU Extension) [`#40`](https://github.com/project-vrcz/content-manager-connect/pull/40)
+- Better Toolbar. [`#44`](https://github.com/project-vrcz/content-manager-connect/pull/44)
+  - Show Connection Status to App in the toolbar `Tools/VRChat Content Manager Connect/Is RPC Connected`.
+  - Allow Restore Session from the toolbar `Tools/VRChat Content Manager Connect/Restore Session`.
+  - Allow Toggle Enabled Content Mangaer Publish Flow from `Tools/VRChat Content Manager Connect/Enable Content Manager Publish Flow`.
 
 ### Changed
 
