@@ -1,32 +1,56 @@
-﻿using HarmonyLib;
+﻿using System.Reflection;
+using HarmonyLib;
 using UnityEditor;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentManagerConnect.Editor;
+using Uploader = Anatawa12.ContinuousAvatarUploader.Editor.ContinuousAvatarUploader;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader.Patch;
 
-[HarmonyPatch(typeof(Anatawa12.ContinuousAvatarUploader.Editor.ContinuousAvatarUploader), "DoStartUpload")]
+[HarmonyPatch(typeof(Uploader), "DoStartUpload")]
 internal static class PreUploadCheckPatch {
-    private static bool Prefix() {
-        if (RpcClientServiceInstance.TryGetRpcClientService() is not { } rpcClientService ||
-            AppSettingsServiceInstance.TryGetAppSettingsService() is not { } appSettingsService) {
-            EditorUtility.DisplayDialog(
-                "Failed to Start Upload",
-                "VRChat Content Manager Connect is not initialized.",
-                "OK");
-            return false;
-        }
+    private static MethodInfo? DoStartUploadMethod;
 
-        if (!appSettingsService.GetSettings().UseContentManager)
+    private static bool _isCheckSucceed;
+
+    private static bool Prefix(Uploader? __instance) {
+        if (PreUploadCheck.IsTaskRunning)
+            return false;
+
+        if (_isCheckSucceed) {
+            _isCheckSucceed = false;
             return true;
-
-        if (rpcClientService.State != RpcClientState.Connected) {
-            EditorUtility.DisplayDialog(
-                "Failed to Start Upload",
-                "RPC Client is not connected.",
-                "OK");
-            return false;
         }
 
-        return true;
+        PreUploadCheck.RunPreUploadCheck(() => {
+                DoStartUploadMethod ??=
+                    AccessTools.Method(typeof(Uploader),
+                        "DoStartUpload");
+                if (DoStartUploadMethod is null) {
+                    EditorUtility.DisplayDialog(
+                        "Failed to Start Upload",
+                        "Auto reconnect is succeed, but we can start the upload for you.\n" +
+                        "Click the upload button again may solve your problem.\n\n" +
+                        "Report this issue to the developer: ContinuousAvatarUploader.DoStartUpload MethodInfo is null.",
+                        "OK");
+                    return;
+                }
+
+                if (__instance is null) {
+                    EditorUtility.DisplayDialog(
+                        "Failed to Start Upload",
+                        "Auto reconnect is succeed, but we can start the upload for you.\n" +
+                        "Click the upload button again may solve your problem.\n\n" +
+                        "Report this issue to the developer: ContinuousAvatarUploader instance is null.",
+                        "OK");
+                    return;
+                }
+
+                _isCheckSucceed = true;
+                DoStartUploadMethod.Invoke(__instance, null);
+            },
+            () => _isCheckSucceed = false
+        );
+
+        return false;
     }
 }

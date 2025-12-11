@@ -52,7 +52,7 @@ internal sealed class ReconnectPage : VisualElement {
 
         _forgetButton.clicked += async () => {
             try {
-                await _rpcClientService.DisconnectAsync();
+                await _rpcClientService.ForgetAndDisconnectAsync();
                 sessionForgotCallback();
             }
             catch (Exception ex) {

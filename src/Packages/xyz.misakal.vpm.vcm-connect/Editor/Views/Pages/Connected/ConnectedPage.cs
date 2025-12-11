@@ -30,7 +30,7 @@ internal sealed class ConnectedPage : VisualElement {
 
         _rpcClientService = app.ServiceProvider.GetRequiredService<RpcClientService>();
 
-        _disconnectButton.clicked += async () => await _rpcClientService.DisconnectAsync();
+        _disconnectButton.clicked += async () => await _rpcClientService.ForgetAndDisconnectAsync();
 
         RegisterCallback<AttachToPanelEvent>(_ => {
             _rpcClientService.StateChanged += OnRpcClientServiceStateChanged;

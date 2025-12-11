@@ -47,6 +47,23 @@ internal sealed class RpcClientService {
             new ProductInfoHeaderValue(new ProductHeaderValue("VRChatContentManager.ConnectEditorApp", "snapshot")));
     }
 
+    public async ValueTask<bool> IsConnectionValidAsync() {
+        if (State != RpcClientState.Connected)
+            return false;
+
+        try {
+            await GetAuthMetadataAsyncCore();
+            return true;
+        }
+        catch (Exception ex) {
+            Debug.LogException(ex);
+            Debug.LogError("Connection is not valid. Disconnecting.");
+            await DisconnectAsync();
+        }
+
+        return false;
+    }
+
     public async ValueTask<RpcClientSession?> GetLastSessionInfoAsync() {
         return await _sessionProvider.GetSessionsAsync();
     }
@@ -102,7 +119,7 @@ internal sealed class RpcClientService {
     }
 
     public async ValueTask<string> RequestChallengeAsync(string baseUrl) {
-        await DisconnectAsync();
+        await ForgetAndDisconnectAsync();
 
         var baseUri = new Uri(baseUrl);
 
@@ -157,7 +174,7 @@ internal sealed class RpcClientService {
             Debug.LogException(ex);
             Debug.LogError("Failed to validate token, disconnecting.");
 
-            await DisconnectAsync();
+            await ForgetAndDisconnectAsync();
             return;
         }
 
@@ -243,7 +260,7 @@ internal sealed class RpcClientService {
         var response = await _httpClient.SendAsync(request);
         if (response.StatusCode == HttpStatusCode.Unauthorized) {
             Debug.LogWarning("Unauthorized response, disconnecting.");
-            await DisconnectAsync();
+            await ForgetAndDisconnectAsync();
 
             throw new InvalidOperationException("Unauthorized response.");
         }
@@ -251,16 +268,19 @@ internal sealed class RpcClientService {
         return response;
     }
 
-    public async Task DisconnectAsync() {
+    public async Task ForgetAndDisconnectAsync() {
+        await DisconnectAsync();
+        await _sessionProvider.RemoveSessionAsync();
+    }
+
+    public Task DisconnectAsync() {
         ChangeState(RpcClientState.Disconnected);
         _token = null;
         _httpClient.DefaultRequestHeaders.Authorization = null;
         _baseUrl = null;
         _httpClient.BaseAddress = null;
 
-        await _sessionProvider.RemoveSessionAsync();
-
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     private void ChangeState(RpcClientState newState) {

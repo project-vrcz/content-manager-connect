@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Smart pre upload check logic [`#40`](https://github.com/project-vrcz/content-manager-connect/pull/40)
+  - Check Connection State:
+    - Connected:
+      - Check Is Connection Valid:
+        - Valid: **Continue Upload**
+        - Invalid: **Prevent upload and show dialog.** Disconnect (won't forget session).
+    - Diconnected
+      - Check Is Last Session Exist:
+        - Exist:
+          - Try Restore Last Session:
+            - Success: **Continue Upload**
+            - Failed: **Prevent upload and show dialog.**
+        - No Exist:
+          - **Prevent upload and show dialog.**
+
 ## [0.1.0] - 2025-12-08
 
 ### Added
