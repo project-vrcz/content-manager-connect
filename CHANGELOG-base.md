@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Auto reconnect when reload domain failed will no logner print error in editor console. [`#42`](https://github.com/project-vrcz/content-manager-connect/pull/42)
 - Auto uppercase when enter Challenge Code. [`#39`](https://github.com/project-vrcz/content-manager-connect/pull/39)
 - Brand new Settings UI. [`#37`](https://github.com/project-vrcz/content-manager-connect/pull/37)
   - Better looking.

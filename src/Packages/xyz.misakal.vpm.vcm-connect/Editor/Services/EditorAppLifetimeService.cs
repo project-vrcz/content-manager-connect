@@ -20,9 +20,8 @@ internal sealed class EditorAppLifetimeService {
         try {
             await _rpcClientService.RestoreSessionAsync();
         }
-        catch (Exception ex) {
-            Debug.LogException(ex);
-            Debug.LogError("[VRCCM.Connect] Failed to restore RPC client session: " + ex.Message);
+        catch {
+            // ignored
         }
     }
 }
