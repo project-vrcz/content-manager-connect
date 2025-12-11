@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Deprecated
+
+- Remove cancel CAU upload when rpc connection disconnected feature. [`#46`](https://github.com/project-vrcz/content-manager-connect/pull/46)
+
 ## [0.1.0] - 2025-12-08
 
 ### Added
