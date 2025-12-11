@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VRChatContentManagerConnect.Editor.Models;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 using VRChatContentManagerConnect.Editor.Views.Pages.Connected;
@@ -28,8 +29,11 @@ internal sealed class ContentManagerSettingsView : VisualElement {
 
     private VisualElement? _currentPage;
 
+    private readonly AppSettingsService _appSettingsService;
     private readonly RpcClientService _rpcClientService;
     private readonly IRpcClientIdProvider _rpcClientIdProvider;
+
+    private readonly AppSettings _appSettings;
 
     public ContentManagerSettingsView() {
         var path = AssetDatabase.GUIDToAssetPath(VisualTreeAssetGuid);
@@ -70,12 +74,13 @@ internal sealed class ContentManagerSettingsView : VisualElement {
 
         _clientIdLabel.text = _rpcClientService.GetClientId();
 
-        var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
+        _appSettingsService = app.ServiceProvider.GetRequiredService<AppSettingsService>();
+        _appSettings = _appSettingsService.GetSettings();
 
-        _enableContentManagerPublishFlowToggle.value = settings.GetSettings().UseContentManager;
+        _enableContentManagerPublishFlowToggle.value = _appSettings.UseContentManager;
         _enableContentManagerPublishFlowToggle.RegisterValueChangedCallback(args => {
-            settings.GetSettings().UseContentManager = args.newValue;
-            settings.SaveSettings();
+            _appSettings.UseContentManager = args.newValue;
+            _appSettingsService.SaveSettings();
         });
 
         _clientNameInputField.value = _rpcClientIdProvider.GetClientName();
@@ -84,14 +89,20 @@ internal sealed class ContentManagerSettingsView : VisualElement {
         });
 
         RegisterCallback<AttachToPanelEvent>(_ => {
+            EditorApplication.update += UpdateSettings;
             _rpcClientService.StateChanged += RpcClientServiceOnStateChanged;
         });
 
         RegisterCallback<DetachFromPanelEvent>(_ => {
+            EditorApplication.update -= UpdateSettings;
             _rpcClientService.StateChanged -= RpcClientServiceOnStateChanged;
         });
 
         UpdateConnectionState();
+    }
+
+    private void UpdateSettings() {
+        _enableContentManagerPublishFlowToggle.value = _appSettings.UseContentManager;
     }
 
     private void UpdateConnectionState() {

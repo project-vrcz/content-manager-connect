@@ -24,6 +24,7 @@ internal class ConnectEditorApp {
         services.AddSingleton<RpcClientService>();
         services.AddSingleton<EditorAppLifetimeService>();
         services.AddSingleton<AppSettingsService>();
+        services.AddSingleton<MenuItemService>();
 
         var provider = services.BuildServiceProvider();
 
