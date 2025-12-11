@@ -1,11 +1,12 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using VRChatContentManagerConnect.Editor.MenuItems;
 
 namespace VRChatContentManagerConnect.Editor.Views {
     public class ContentManagerSettingsWindow : EditorWindow {
-        [MenuItem("Window/VRChat Content Manager Connect/Settings", priority = 2000)]
-        [MenuItem("Tools/VRChat Content Manager Connect/Settings")]
+        [MenuItem(MenuItemPath.RootWindowMenuItemPath + "Settings", priority = 2000)]
+        [MenuItem(MenuItemPath.RootMenuItemPath + "Settings")]
         public static void ShowSettings() {
             var window = GetWindow<ContentManagerSettingsWindow>();
             window.titleContent = new GUIContent("Connect Settings");

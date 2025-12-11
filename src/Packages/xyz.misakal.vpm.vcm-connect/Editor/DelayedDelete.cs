@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using VRChatContentManagerConnect.Editor.MenuItems;
 
 namespace VRChatContentManagerConnect.Editor;
 
@@ -34,7 +35,7 @@ internal static class DelayedDelete {
         }
     }
     
-    [MenuItem("Tools/VRChat Content Manager Connect/Delayed Delete/List Delayed Delete Attempts")]
+    [MenuItem(MenuItemPath.RootMenuItemPath + "Delayed Delete/List Delayed Delete Attempts")]
     public static void ListDeleteAttempts() {
         if (_fileDeleteAttempts.Count == 0) {
             Debug.Log("[VRCCM.Connect] DelayedDelete: No files to delete.");
@@ -51,7 +52,7 @@ internal static class DelayedDelete {
         Debug.Log(stringBuilder.ToString());
     }
 
-    [MenuItem("Tools/VRChat Content Manager Connect/Delayed Delete/Run Delayed Delete Attempts")]
+    [MenuItem(MenuItemPath.RootMenuItemPath + "Delayed Delete/Run Delayed Delete Attempts")]
     public static void RunDeleteAttempts() {
         var filesToDelete = _fileDeleteAttempts.Keys.ToList();
 
