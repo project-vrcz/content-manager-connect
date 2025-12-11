@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityEngine;
 using VRC.SDK3A.Editor;
 using VRC.SDKBase.Editor.Api;
-using VRChatContentManagerConnect.Avatars.Editor.Utils;
 using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
@@ -36,7 +35,6 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                 Debug.LogError("Failed to Build and Upload: VRChat Content Manager Connect is not initialized.");
                 __result = Task.FromException(
                     new InvalidOperationException("VRChat Content Manager Connect is not initialized."));
-                CauUtils.TryStopContinuousAvatarUploader();
                 return false;
             }
 
@@ -48,7 +46,6 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
             if (rpcClient.State != RpcClientState.Connected) {
                 Debug.LogError("Failed to Build and Upload: RPC Client is not connected.");
                 __result = Task.FromException(new InvalidOperationException("RPC Client is not connected."));
-                CauUtils.TryStopContinuousAvatarUploader();
                 return false;
             }
 
