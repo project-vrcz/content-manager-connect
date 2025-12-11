@@ -68,6 +68,10 @@ internal sealed class NewConnectionPage : VisualElement {
             }
         };
 
+        _challengeCodeInputField.RegisterValueChangedCallback(args => {
+            _challengeCodeInputField.SetValueWithoutNotify(args.newValue.ToUpperInvariant());
+        });
+
         _challengeButton.clicked += async () => {
             try {
                 await _rpcClientService.CompleteChallengeAsync(_challengeCodeInputField.text);
