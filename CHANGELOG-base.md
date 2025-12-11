@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Smart pre upload check logic (For CAU Extension) [`#40`](https://github.com/project-vrcz/content-manager-connect/pull/40)
+
 ### Changed
 
 - Auto uppercase when enter Challenge Code. [`#39`](https://github.com/project-vrcz/content-manager-connect/pull/39)
