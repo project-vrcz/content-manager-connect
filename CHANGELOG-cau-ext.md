@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-12-12
+
 ### Changed
 
 - Mark Avatars pacakge as dependence to avoid confuse. [`#49`](https://github.com/project-vrcz/content-manager-connect/pull/49)
@@ -38,7 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check RPC Connection Status before CAU upload start
   - Prevent upload if disconnected and use content manager publish flow is enabled.
 
-[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.1...HEAD
+[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.2...HEAD
+[0.1.2]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.1...cau-ext-v0.1.2
 [0.1.1]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.1...cau-ext-v0.1.1
 [0.1.1]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.0...cau-ext-v0.1.1
 [0.1.0]: https://github.com/project-vrcz/content-manager-connect/releases/tag/cau-ext-v0.1.0
