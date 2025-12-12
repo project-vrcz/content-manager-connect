@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Mark Avatars pacakge as dependence to avoid confuse. [`#49`](https://github.com/project-vrcz/content-manager-connect/pull/49)
+
 ## [0.1.1] - 2025-12-11
 
 ### Added
