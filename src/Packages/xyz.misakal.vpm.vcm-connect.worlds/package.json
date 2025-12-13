@@ -1,7 +1,7 @@
 {
   "name": "xyz.misakal.vpm.vcm-connect.worlds",
   "displayName": "VRChat Content Manager Connect - Worlds",
-  "version": "0.1.0",
+  "version": "0.2.0-beta.1",
   "hideInEditor": true,
   "description": "Connect to your VRChat Content Manager",
   "unity": "2022.3",
