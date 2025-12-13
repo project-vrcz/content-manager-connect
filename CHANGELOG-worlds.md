@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
 - Migrate to Yes! Patch Framework Logging System. [`#54`](https://github.com/project-vrcz/content-manager-connect/pull/54)
 
+## [0.2.0-beta.2] - 2025-12-13
+
+### Changed
+
+- Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
+- Migrate to Yes! Patch Framework Logging System. [`#54`](https://github.com/project-vrcz/content-manager-connect/pull/54)
+
 ## [0.2.0-beta.1] - 2025-12-13
 
 ### Changed
@@ -39,7 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow Create and Update worlds using content manager.
 - Allow Create new Content. [`#17`](https://github.com/project-vrcz/content-manager-connect/pull/17)
 
-[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/worlds-v0.2.0-beta.1...HEAD
+[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/worlds-v0.2.0-beta.2...HEAD
+[0.2.0-beta.2]: https://github.com/project-vrcz/content-manager-connect/compare/worlds-v0.2.0-beta.1...worlds-v0.2.0-beta.2
 [0.2.0-beta.1]: https://github.com/project-vrcz/content-manager-connect/compare/worlds-v0.1.0...worlds-v0.2.0-beta.1
 [0.1.0]: https://github.com/project-vrcz/content-manager-connect/compare/worlds-v0.1.0-beta.2...worlds-v0.1.0
 [0.1.0-beta.2]: https://github.com/project-vrcz/content-manager-connect/compare/worlds-v0.1.0-beta.1...worlds-v0.1.0-beta.2
