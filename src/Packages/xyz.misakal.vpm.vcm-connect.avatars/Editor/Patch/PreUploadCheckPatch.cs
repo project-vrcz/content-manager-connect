@@ -12,6 +12,7 @@ using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
@@ -27,6 +28,7 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         public override bool IsDefaultEnabled => true;
 
         private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.pre-build-and-upload-check");
+        private static readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(PreUploadCheckPatch));
 
         public override void Patch() {
             _harmony.PatchAll(typeof(PreUploadCheckPatch));
@@ -52,7 +54,7 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         [HarmonyPrefix]
         public static bool Prefix(ref Task __result) {
             if (ConnectEditorApp.Instance is not { } app) {
-                Debug.LogError("Failed to Build and Upload: VRChat Content Manager Connect is not initialized.");
+                _logger.LogError("Failed to Build and Upload: VRChat Content Manager Connect is not initialized.");
                 __result = Task.FromException(
                     new InvalidOperationException("VRChat Content Manager Connect is not initialized."));
                 return false;
@@ -64,7 +66,7 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
 
             var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
             if (rpcClient.State != RpcClientState.Connected) {
-                Debug.LogError("Failed to Build and Upload: RPC Client is not connected.");
+                _logger.LogError("Failed to Build and Upload: RPC Client is not connected.");
                 __result = Task.FromException(new InvalidOperationException("RPC Client is not connected."));
                 return false;
             }

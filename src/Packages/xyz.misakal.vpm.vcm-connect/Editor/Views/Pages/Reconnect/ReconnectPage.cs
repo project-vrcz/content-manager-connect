@@ -5,11 +5,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Editor.Views.Pages.Reconnect;
 
 internal sealed class ReconnectPage : VisualElement {
     private readonly RpcClientService _rpcClientService;
+    private readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(ReconnectPage));
 
     private readonly Label _lastInstanceHostUrlLabel;
 
@@ -29,7 +31,7 @@ internal sealed class ReconnectPage : VisualElement {
         _forgetButton = this.Q<Button>("forget-button");
 
         if (ConnectEditorApp.Instance is not { } app) {
-            Debug.LogWarning("ConnectEditorApp instance is not available.");
+            _logger.LogWarning("ConnectEditorApp instance is not available.");
             throw new InvalidOperationException("ConnectEditorApp instance is not available.");
         }
 
@@ -40,8 +42,7 @@ internal sealed class ReconnectPage : VisualElement {
                 await _rpcClientService.RestoreSessionAsync();
             }
             catch (Exception ex) {
-                Debug.LogException(ex);
-                Debug.LogError("Failed to restore RPC session.");
+                _logger.LogError(ex, "Failed to restore RPC session.");
 
                 EditorUtility.DisplayDialog("Reconnect Failed",
                     "Failed to reconnect to the last session:\n\n" +
@@ -56,8 +57,7 @@ internal sealed class ReconnectPage : VisualElement {
                 sessionForgotCallback();
             }
             catch (Exception ex) {
-                Debug.LogException(ex);
-                Debug.LogError("Failed to forget RPC session.");
+                _logger.LogError(ex, "Failed to forget RPC session.");
 
                 EditorUtility.DisplayDialog("Forget Failed",
                     "Failed to forget the last session:\n\n" +
@@ -80,8 +80,7 @@ internal sealed class ReconnectPage : VisualElement {
             _lastInstanceHostUrlLabel.text = session.Host;
         }
         catch (Exception ex) {
-            Debug.LogException(ex);
-            Debug.LogError("Failed to get last RPC session info.");
+            _logger.LogError(ex, "Failed to get last RPC session info.");
         }
     }
 }

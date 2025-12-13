@@ -10,6 +10,7 @@ using VRChatContentManagerConnect.Editor.Services.Rpc;
 using VRChatContentManagerConnect.Editor.Views.Pages.Connected;
 using VRChatContentManagerConnect.Editor.Views.Pages.NewConnection;
 using VRChatContentManagerConnect.Editor.Views.Pages.Reconnect;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Editor.Views;
 
@@ -32,6 +33,7 @@ internal sealed class ContentManagerSettingsView : VisualElement {
     private readonly AppSettingsService _appSettingsService;
     private readonly RpcClientService _rpcClientService;
     private readonly IRpcClientIdProvider _rpcClientIdProvider;
+    private readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(ContentManagerSettingsView));
 
     private readonly AppSettings _appSettings;
 
@@ -65,7 +67,7 @@ internal sealed class ContentManagerSettingsView : VisualElement {
     #endif
 
         if (ConnectEditorApp.Instance is not { } app) {
-            Debug.LogError("VRChat Content Manager Connect App is not initialized.");
+            _logger.LogError("VRChat Content Manager Connect App is not initialized.");
             throw new InvalidOperationException("VRChat Content Manager Connect App is not initialized.");
         }
 
@@ -143,8 +145,7 @@ internal sealed class ContentManagerSettingsView : VisualElement {
                         });
                     }
                     catch (Exception ex) {
-                        Debug.LogException(ex);
-                        Debug.LogError("Failed to check if session can be restored.");
+                        _logger.LogError(ex, "Failed to check if session can be restored.");
 
                         MainThreadDispatcher.Dispatch(() => {
                             if (_currentPage is NewConnectionPage)

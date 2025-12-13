@@ -29,7 +29,7 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         ) {
             var app = ConnectEditorApp.Instance;
             if (app == null) {
-                Debug.LogWarning(
+                _logger.LogWarning(
                     "[VRCCM.Connect] AvatarBundleUploadApiPatch: ConnectEditorApp instance is null. Skipping patch.");
                 return true;
             }
@@ -55,27 +55,27 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                                      ApiAvatar.VERSION.ApiVersion +
                                      "_" + Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl();
 
-                Debug.Log($"AvatarId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
+                _logger.LogDebug($"AvatarId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
                 // Send Bundle File to App, Start new task
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 if (rpcClient.State == RpcClientState.Disconnected) {
-                    Debug.Log("[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
+                    _logger.LogWarning("RPC client is disconnected. Attempting to restore session...");
 
                     try {
                         await rpcClient.RestoreSessionAsync();
-                        Debug.Log("[VRCCM.Connect] RPC session restored successfully.");
+                        _logger.LogInfo("RPC session restored successfully.");
                     }
                     catch (Exception ex) {
-                        Debug.LogException(ex);
-                        Debug.LogError("[VRCCM.Connect] Failed to restore RPC session. Aborting avatar bundle upload.");
+                        _logger.LogError(ex,
+                            "Failed to restore RPC session. Aborting avatar bundle upload.");
 
                         throw new InvalidOperationException("RPC client is not connected.", ex);
                     }
                 }
 
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
-                Debug.Log("Bundle File Id: " + fileId);
+                _logger.LogDebug("Bundle File Id: " + fileId);
 
                 await rpcClient.CreateAvatarPublishTaskAsync(id, fileId, data.Name, Tools.Platform,
                     Tools.UnityVersion.ToString());

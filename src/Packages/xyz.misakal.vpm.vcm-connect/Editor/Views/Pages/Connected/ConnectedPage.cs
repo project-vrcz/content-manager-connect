@@ -3,11 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Editor.Views.Pages.Connected;
 
 internal sealed class ConnectedPage : VisualElement {
     private readonly RpcClientService _rpcClientService;
+    private readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(ConnectedPage));
 
     private readonly Label _instanceNameLabel;
     private readonly Button _disconnectButton;
@@ -24,7 +26,7 @@ internal sealed class ConnectedPage : VisualElement {
         _disconnectButton = this.Q<Button>("disconnect-button");
 
         if (ConnectEditorApp.Instance is not { } app) {
-            Debug.LogWarning("ConnectEditorApp instance is not available.");
+            _logger.LogWarning("ConnectEditorApp instance is not available.");
             throw new InvalidOperationException("ConnectEditorApp instance is not available.");
         }
 

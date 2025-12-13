@@ -46,14 +46,14 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
             var codeMatcher = new CodeMatcher(codes)
                 .MatchStartForward(
                     CodeMatch.Calls(() => BuildPipeline.BuildAssetBundles(default, default, default, default)))
-                .ThrowIfInvalid("[VRCCM.Connect] WorldAssetExporterPatch: Could not find BuildAssetBundles calls.")
+                .ThrowIfInvalid("Could not find BuildAssetBundles calls.")
                 .RemoveInstruction()
                 .InsertAndAdvance(
                     CodeInstruction.Call(() => BuildAssetBundles(default, default, default, default)))
                 .MatchStartForward(
                     CodeMatch.Calls(() => File.Delete(default))
                 )
-                .ThrowIfInvalid("[VRCCM.Connect] WorldAssetExporterPatch: Could not find File.Delete calls.")
+                .ThrowIfInvalid("Could not find File.Delete calls.")
                 .Repeat(codeMatcher => {
                     codeMatcher
                         .RemoveInstruction()
