@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
 
+## [0.2.0-beta.1] - 2025-12-13
+
+### Changed
+
+- Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
+
 ## [0.1.2] - 2025-12-12
 
 ### Changed
@@ -44,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check RPC Connection Status before CAU upload start
   - Prevent upload if disconnected and use content manager publish flow is enabled.
 
-[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.2...HEAD
+[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.2.0-beta.1...HEAD
+[0.2.0-beta.1]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.2...cau-ext-v0.2.0-beta.1
 [0.1.2]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.1...cau-ext-v0.1.2
 [0.1.1]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.1...cau-ext-v0.1.1
 [0.1.1]: https://github.com/project-vrcz/content-manager-connect/compare/cau-ext-v0.1.0...cau-ext-v0.1.1
