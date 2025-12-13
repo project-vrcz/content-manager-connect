@@ -17,7 +17,7 @@ namespace VRChatContentManagerConnect.Editor.Patch {
     [HarmonyPatch]
     internal class AssetBundleValidationPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.skip-compression-asset-bundle-validation-size-patch";
-        public override string DisplayName => "Skip Compression Asset Bundle Size Validation Patch";
+        public override string DisplayName => "Skip Size Check for Compression Asset Bundle";
 
         public override string Description =>
             "Skip the asset bundle size check for \"compression\" bundle to allow send large uncompressed asset bundles to App.";
