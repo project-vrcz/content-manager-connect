@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
+
 ## [0.1.2] - 2025-12-12
 
 ### Changed
