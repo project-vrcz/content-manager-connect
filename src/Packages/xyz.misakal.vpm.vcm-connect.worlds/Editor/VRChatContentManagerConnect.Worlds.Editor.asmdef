@@ -13,12 +13,12 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "VCMC.0Harmony.dll",
         "VRCSDK3-Editor.dll",
         "VRCCore-Editor.dll",
         "VCMC.Microsoft.Extensions.DependencyInjection.Abstractions.dll",
         "VCMC.Microsoft.Extensions.DependencyInjection.dll",
-        "VCMC.Microsoft.Bcl.AsyncInterfaces.dll"
+        "0Harmony.dll",
+        "YPF4VRC.Microsoft.Bcl.AsyncInterfaces.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],
