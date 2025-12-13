@@ -11,15 +11,39 @@ using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
-    // public static async Task<VRCWorld> CreateNewWorld(
-    // string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
-    // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.CreateNewWorld),
-        typeof(string), typeof(VRCWorld), typeof(string), typeof(string), typeof(string),
-        typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class WorldCreateApiPatch {
+    [HarmonyPatch]
+    internal class WorldCreateApiPatch : YesPatchBase {
+        public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.redirect-create-new-worlds";
+        public override string DisplayName => "Redirect Worlds Creation to Content Manager";
+
+        public override string Description =>
+            "Redirects worlds creation requests to VRChat Content Manager when enabled in settings.";
+
+        public override string Category => PatchConst.Category;
+
+        public override bool IsDefaultEnabled => true;
+
+        private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.redirect-create-new-worlds");
+
+        public override void Patch() {
+            _harmony.PatchAll(typeof(WorldCreateApiPatch));
+        }
+
+        public override void UnPatch() {
+            _harmony.UnpatchSelf();
+        }
+
+        // public static async Task<VRCWorld> CreateNewWorld(
+        // string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
+        // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.CreateNewWorld),
+            typeof(string), typeof(VRCWorld), typeof(string), typeof(string), typeof(string),
+            typeof(Action<string, float>), typeof(CancellationToken))]
+        [HarmonyPrefix]
         internal static bool Prefix(ref Task<VRCWorld> __result,
             string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
             Action<string, float> onProgress = null,

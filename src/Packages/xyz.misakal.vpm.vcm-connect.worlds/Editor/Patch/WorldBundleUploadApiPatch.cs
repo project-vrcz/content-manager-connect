@@ -12,15 +12,40 @@ using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
-    // public static async Task<VRCWorld> UpdateWorldBundle(
-    // string id, VRCWorld data, string pathToBundle, string worldSignature, 
-    // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateWorldBundle),
-        typeof(string), typeof(VRCWorld), typeof(string), typeof(string),
-        typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class WorldBundleUploadApiPatch {
+    [HarmonyPatch]
+    internal class WorldBundleUploadApiPatch : YesPatchBase {
+        public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.redirect-update-to-content-manager";
+        public override string DisplayName => "Redirect Worlds Update to Content Manager";
+
+        public override string Description =>
+            "Redirects worlds bundle update requests to VRChat Content Manager when enabled in settings.";
+
+        public override string Category => PatchConst.Category;
+
+        public override bool IsDefaultEnabled => true;
+
+        private readonly Harmony _harmony =
+            new("xyz.misakal.vpm.vcm-connect.worlds.redirect-update-to-content-manager");
+
+        public override void Patch() {
+            _harmony.PatchAll(typeof(WorldBundleUploadApiPatch));
+        }
+
+        public override void UnPatch() {
+            _harmony.UnpatchSelf();
+        }
+
+        // public static async Task<VRCWorld> UpdateWorldBundle(
+        // string id, VRCWorld data, string pathToBundle, string worldSignature, 
+        // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateWorldBundle),
+            typeof(string), typeof(VRCWorld), typeof(string), typeof(string),
+            typeof(Action<string, float>), typeof(CancellationToken))]
+        [HarmonyPrefix]
         internal static bool Prefix(ref Task<VRCWorld> __result,
             string id, VRCWorld data, string pathToBundle, string worldSignature,
             Action<string, float> onProgress = null,
@@ -59,13 +84,13 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 var currentUserId = APIUser.CurrentUser?.id;
                 if (currentUserId is null)
                     throw new InvalidOperationException("Current user is not logged in.");
-                
+
                 // Send Bundle File to App, Start new task
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 if (rpcClient.State == RpcClientState.Disconnected) {
                     Debug.Log("[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
-                    
+
                     try {
                         await rpcClient.RestoreSessionAsync();
                         Debug.Log("[VRCCM.Connect] RPC session restored successfully.");
@@ -73,7 +98,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                     catch (Exception ex) {
                         Debug.LogException(ex);
                         Debug.LogError("[VRCCM.Connect] Failed to restore RPC session. Aborting world bundle upload.");
-                        
+
                         throw new InvalidOperationException("RPC client is not connected.", ex);
                     }
                 }
@@ -101,7 +126,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                     data.RecommendedCapacity,
                     data.PreviewYoutubeId,
                     data.UdonProducts.ToArray()
-                    ));
+                ));
 
                 return data;
             });

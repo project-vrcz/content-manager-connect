@@ -11,15 +11,41 @@ using VRC.SDKBase.Editor.Api;
 using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
-    // public static async Task<VRCAvatar> UpdateAvatarBundle(
-    // string id, VRCAvatar data, string pathToBundle,
-    // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateAvatarBundle),
-        typeof(string), typeof(VRCAvatar), typeof(string), typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class AvatarBundleUploadApiPatch {
-        internal static bool Prefix(ref Task<VRCAvatar> __result,
+    [HarmonyPatch]
+    internal class UpdateAvatarBundleApiPatch : YesPatchBase {
+        public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.redirect-update-avatar-bundle";
+        public override string DisplayName => "Redirect Avatar Update to Content Manager";
+
+        public override string Description =>
+            "Redirects avatar bundle update requests to VRChat Content Manager when enabled in settings.";
+
+        public override string Category => PatchConst.Category;
+
+        public override bool IsDefaultEnabled => true;
+
+        private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.redirect-update-avatar-bundle");
+
+        public override void Patch() {
+            _harmony.PatchAll(typeof(UpdateAvatarBundleApiPatch));
+        }
+
+        public override void UnPatch() {
+            _harmony.UnpatchSelf();
+        }
+
+        // public static async Task<VRCAvatar> UpdateAvatarBundle(
+        // string id, VRCAvatar data, string pathToBundle,
+        // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateAvatarBundle),
+            typeof(string), typeof(VRCAvatar), typeof(string), typeof(Action<string, float>),
+            typeof(CancellationToken))]
+        [HarmonyPrefix]
+        internal static bool UploadAvatarBundlePrefix(
+            ref Task<VRCAvatar> __result,
             string id, VRCAvatar data, string pathToBundle,
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default

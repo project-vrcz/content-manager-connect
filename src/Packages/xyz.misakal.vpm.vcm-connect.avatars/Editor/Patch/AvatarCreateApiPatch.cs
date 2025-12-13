@@ -11,16 +11,40 @@ using VRC.SDKBase.Editor.Api;
 using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
-    // public static async Task<VRCAvatar> CreateNewAvatar(
-    // string id, VRCAvatar data, string pathToBundle, string pathToImage,
-    // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.CreateNewAvatar),
-        typeof(string), typeof(VRCAvatar), typeof(string), typeof(string)
-        , typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class AvatarCreateApiPatch {
-        internal static bool Prefix(ref Task<VRCAvatar> __result,
+    [HarmonyPatch]
+    internal class AvatarCreateApiPatch : YesPatchBase {
+        public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.redirect-create-new-avatar";
+        public override string DisplayName => "Redirect Avatar Creation to Content Manager";
+
+        public override string Description =>
+            "Redirects avatar creation requests to VRChat Content Manager when enabled in settings.";
+
+        public override string Category => PatchConst.Category;
+
+        public override bool IsDefaultEnabled => true;
+
+        private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.redirect-create-new-avatar");
+
+        public override void Patch() {
+            _harmony.PatchAll(typeof(AvatarCreateApiPatch));
+        }
+
+        public override void UnPatch() {
+            _harmony.UnpatchSelf();
+        }
+
+        // public static async Task<VRCAvatar> CreateNewAvatar(
+        // string id, VRCAvatar data, string pathToBundle, string pathToImage,
+        // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.CreateNewAvatar),
+            typeof(string), typeof(VRCAvatar), typeof(string), typeof(string)
+            , typeof(Action<string, float>), typeof(CancellationToken))]
+        [HarmonyPrefix]
+        internal static bool VrcApiCreateNewAvatarPrefix(ref Task<VRCAvatar> __result,
             string id, VRCAvatar data, string pathToBundle, string pathToImage,
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default
