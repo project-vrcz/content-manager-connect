@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
 - Migrate to Yes! Patch Framework Logging System. [`#54`](https://github.com/project-vrcz/content-manager-connect/pull/54)
 
+## [0.2.0-beta.2] - 2025-12-13
+
+### Changed
+
+- Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
+- Migrate to Yes! Patch Framework Logging System. [`#54`](https://github.com/project-vrcz/content-manager-connect/pull/54)
+
 ## [0.2.0-beta.1] - 2025-12-13
 
 ### Changed
@@ -83,7 +90,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix unable to build and upload when use Content Mangaer publish flow is disbaled. [`#8`](https://github.com/project-vrcz/content-manager-connect/pull/8)
 
-[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.2.0-beta.1...HEAD
+[unreleased]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.2.0-beta.2...HEAD
+[0.2.0-beta.2]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.2.0-beta.1...base-v0.2.0-beta.2
 [0.2.0-beta.1]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.1.3...base-v0.2.0-beta.1
 [0.1.3]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.1.2...base-v0.1.3
 [0.1.2]: https://github.com/project-vrcz/content-manager-connect/compare/base-v0.1.1...base-v0.1.2
