@@ -1,11 +1,36 @@
 ﻿using HarmonyLib;
 using UnityEditor;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader.Patch;
 
-[HarmonyPatch(typeof(Anatawa12.ContinuousAvatarUploader.Editor.ContinuousAvatarUploader), "OnGUI")]
-internal static class ConnectionStatusPatch {
+[HarmonyPatch]
+internal class ConnectionStatusPatch : YesPatchBase {
+    public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext.connection-status";
+    public override string DisplayName => "Show Connection Status";
+
+    public override string Description =>
+        "Display the RPC client connection status in the Continuous Avatar Uploader UI.";
+
+    public override string Category => CauPatchConst.Category;
+
+    public override bool IsDefaultEnabled => true;
+
+    private readonly Harmony _harmony =
+        new("xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext.connection-status");
+
+    public override void Patch() {
+        _harmony.PatchAll(typeof(ConnectionStatusPatch));
+    }
+
+    public override void UnPatch() {
+        _harmony.UnpatchSelf();
+    }
+
+    [HarmonyPatch(typeof(Anatawa12.ContinuousAvatarUploader.Editor.ContinuousAvatarUploader), "OnGUI")]
+    [HarmonyPrefix]
     public static void Prefix() {
         if (RpcClientServiceInstance.TryGetRpcClientService() is not { } rpcClientService ||
             AppSettingsServiceInstance.TryGetAppSettingsService() is not { } appSettingsService) {

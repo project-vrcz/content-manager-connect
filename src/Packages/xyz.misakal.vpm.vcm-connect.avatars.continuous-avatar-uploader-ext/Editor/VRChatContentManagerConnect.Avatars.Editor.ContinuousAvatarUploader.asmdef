@@ -3,7 +3,8 @@
     "rootNamespace": "VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader",
     "references": [
         "GUID:0c9bad51c4b14e6d823198f69a8b83a4",
-        "GUID:a8a95dde350644584a64b7c14fc7222d"
+        "GUID:a8a95dde350644584a64b7c14fc7222d",
+        "GUID:c427fdff1390e954e91e12eb67f5cf3e"
     ],
     "includePlatforms": [
         "Editor"
