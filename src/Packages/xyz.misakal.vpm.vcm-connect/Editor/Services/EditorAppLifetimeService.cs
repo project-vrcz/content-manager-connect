@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Editor.Services;
 
@@ -9,6 +10,8 @@ internal sealed class EditorAppLifetimeService {
     private readonly RpcClientService _rpcClientService;
     private readonly AppSettingsService _appSettingsService;
     private readonly MenuItemService _menuItemService;
+
+    private readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(EditorAppLifetimeService));
 
     public EditorAppLifetimeService(
         RpcClientService rpcClientService,
@@ -26,8 +29,8 @@ internal sealed class EditorAppLifetimeService {
         try {
             await _rpcClientService.RestoreSessionAsync();
         }
-        catch {
-            // ignored
+        catch (Exception ex) {
+            _logger.LogDebug(ex, "Failed to auto restore session");
         }
     }
 }

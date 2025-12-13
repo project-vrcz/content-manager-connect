@@ -2,6 +2,7 @@
 using VRChatContentManagerConnect.Editor;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
@@ -15,6 +16,8 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         public override string Category => PatchConst.Category;
 
         public override bool IsDefaultEnabled => true;
+
+        private static readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(RedirectUploadApiPatch));
 
         private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.redirect-avatar-upload-api");
 

@@ -28,8 +28,8 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
         ) {
             var app = ConnectEditorApp.Instance;
             if (app == null) {
-                UnityEngine.Debug.LogWarning(
-                    "[VRCCM.Connect] WorldCreateApiPatch: ConnectEditorApp instance is null. Skipping patch.");
+                _logger.LogWarning(
+                    "ConnectEditorApp instance is null. Skipping patch.");
                 return true;
             }
 
@@ -56,15 +56,14 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 if (rpcClient.State == RpcClientState.Disconnected) {
-                    Debug.Log(
-                        "[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
+                    _logger.LogWarning(
+                        "RPC client is disconnected. Attempting to restore session...");
 
                     try {
                         await rpcClient.RestoreSessionAsync();
                     }
                     catch (Exception ex) {
-                        Debug.LogError(
-                            $"[VRCCM.Connect] Failed to restore RPC session: {ex.Message}");
+                        _logger.LogError(ex, $"Failed to restore RPC session: {ex.Message}");
                         throw;
                     }
                 }
@@ -77,12 +76,12 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                                     "_" + VRC.Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl() +
                                     Path.GetExtension(pathToImage);
 
-                Debug.Log($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
+                _logger.LogDebug($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
 
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
-                Debug.Log("Bundle File Id: " + fileId);
+                _logger.LogDebug("Bundle File Id: " + fileId);
                 var imageFileId = await rpcClient.UploadFileAsync(pathToImage, imageFileName);
-                Debug.Log("Image File Id: " + imageFileId);
+                _logger.LogDebug("Image File Id: " + imageFileId);
 
                 await rpcClient.CreateWorldPublishTaskAsync(new CreateWorldPublishTaskRequest(
                     id,

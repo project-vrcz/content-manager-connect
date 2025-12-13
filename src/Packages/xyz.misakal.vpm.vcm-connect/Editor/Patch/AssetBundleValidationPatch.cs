@@ -6,6 +6,7 @@ using VRC;
 using VRC.SDKBase.Editor.Validation;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Editor.Patch {
     // public static bool CheckIfAssetBundleFileTooLarge(
@@ -25,6 +26,8 @@ namespace VRChatContentManagerConnect.Editor.Patch {
         public override string Category => PatchConst.Category;
 
         public override bool IsDefaultEnabled => true;
+
+        private static readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(AssetBundleValidationPatch));
 
         private readonly Harmony _harmony =
             new("xyz.misakal.vpm.vcm-connect.skip-compression-asset-bundle-validation-size-patch");
@@ -49,8 +52,8 @@ namespace VRChatContentManagerConnect.Editor.Patch {
             __result = true;
 
             if (!File.Exists(vrcFilePath)) {
-                Debug.LogError("[VRCCM.Connect] Failed to validate asset bundle size: file does not exist at path " +
-                               vrcFilePath);
+                _logger.LogError("Failed to validate asset bundle size: file does not exist at path " +
+                                 vrcFilePath);
                 return true;
             }
 
@@ -60,10 +63,9 @@ namespace VRChatContentManagerConnect.Editor.Patch {
                 return false;
             }
             catch (Exception ex) {
-                Debug.LogException(ex);
-                Debug.LogError(
-                    "[VRCCM.Connect] Failed to validate asset bundle size: exception occurred when accessing file at path " +
-                    vrcFilePath);
+                _logger.LogError(
+                    ex, "Failed to validate asset bundle size: exception occurred when accessing file at path " +
+                        vrcFilePath);
                 return false;
             }
         }

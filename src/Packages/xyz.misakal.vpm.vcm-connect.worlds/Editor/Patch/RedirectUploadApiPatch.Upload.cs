@@ -29,8 +29,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
         ) {
             var app = ConnectEditorApp.Instance;
             if (app == null) {
-                Debug.LogWarning(
-                    "[VRCCM.Connect] AvatarBundleUploadApiPatch: ConnectEditorApp instance is null. Skipping patch.");
+                _logger.LogWarning("ConnectEditorApp instance is null. Skipping patch.");
                 return true;
             }
 
@@ -55,7 +54,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                                      ApiWorld.VERSION.ApiVersion +
                                      "_" + Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl();
 
-                Debug.Log($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
+                _logger.LogDebug($"WorldId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
 
                 var currentUserId = APIUser.CurrentUser?.id;
                 if (currentUserId is null)
@@ -65,15 +64,14 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 if (rpcClient.State == RpcClientState.Disconnected) {
-                    Debug.Log("[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
+                    _logger.LogDebug("RPC client is disconnected. Attempting to restore session...");
 
                     try {
                         await rpcClient.RestoreSessionAsync();
-                        Debug.Log("[VRCCM.Connect] RPC session restored successfully.");
+                        _logger.LogDebug("RPC session restored successfully.");
                     }
                     catch (Exception ex) {
-                        Debug.LogException(ex);
-                        Debug.LogError("[VRCCM.Connect] Failed to restore RPC session. Aborting world bundle upload.");
+                        _logger.LogError(ex, "Failed to restore RPC session. Aborting world bundle upload.");
 
                         throw new InvalidOperationException("RPC client is not connected.", ex);
                     }
@@ -84,7 +82,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 }
 
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
-                Debug.Log("Bundle File Id: " + fileId);
+                _logger.LogDebug("Bundle File Id: " + fileId);
 
                 await rpcClient.CreateWorldPublishTaskAsync(new CreateWorldPublishTaskRequest(
                     id,

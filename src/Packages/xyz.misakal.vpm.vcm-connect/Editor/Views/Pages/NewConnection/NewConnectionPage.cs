@@ -3,11 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Editor.Views.Pages.NewConnection;
 
 internal sealed class NewConnectionPage : VisualElement {
     private const string VisualTreeAssetGuid = "280eea869a434efd8a9abf4dd83eee43";
+
+    private readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(NewConnectionPage));
 
     private readonly RpcClientService _rpcClientService;
 
@@ -39,7 +42,7 @@ internal sealed class NewConnectionPage : VisualElement {
         _cancelChallengeButton = this.Q<Button>("cancel-challenge-button");
 
         if (ConnectEditorApp.Instance is not { } app) {
-            Debug.LogWarning("ConnectEditorApp instance is not available.");
+            _logger.LogWarning("ConnectEditorApp instance is not available.");
             throw new InvalidOperationException("ConnectEditorApp instance is not available.");
         }
 
@@ -58,8 +61,7 @@ internal sealed class NewConnectionPage : VisualElement {
                 await _rpcClientService.RequestChallengeAsync(_hostField.value);
             }
             catch (Exception ex) {
-                Debug.LogError($"Failed to request challenge: {ex}");
-                Debug.LogException(ex);
+                _logger.LogError(ex, $"Failed to request challenge: {ex}");
 
                 UnityEditor.EditorUtility.DisplayDialog(
                     "Connection Error",
@@ -77,8 +79,7 @@ internal sealed class NewConnectionPage : VisualElement {
                 await _rpcClientService.CompleteChallengeAsync(_challengeCodeInputField.text);
             }
             catch (Exception ex) {
-                Debug.LogError($"Failed to complete challenge: {ex}");
-                Debug.LogException(ex);
+                _logger.LogError(ex, $"Failed to complete challenge: {ex}");
 
                 UnityEditor.EditorUtility.DisplayDialog(
                     "Challenge Error",
@@ -92,8 +93,7 @@ internal sealed class NewConnectionPage : VisualElement {
                 await _rpcClientService.ForgetAndDisconnectAsync();
             }
             catch (Exception ex) {
-                Debug.LogError("Failed to cancel challenge: " + ex);
-                Debug.LogException(ex);
+                _logger.LogError(ex, "Failed to cancel challenge: " + ex);
 
                 UnityEditor.EditorUtility.DisplayDialog(
                     "Cancel Challenge Error",

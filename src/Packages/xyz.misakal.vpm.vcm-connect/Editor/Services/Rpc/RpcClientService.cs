@@ -11,6 +11,7 @@ using VRChatContentManagerConnect.Editor.Models;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Request;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Response;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 using Random = System.Random;
 
 namespace VRChatContentManagerConnect.Editor.Services.Rpc;
@@ -27,6 +28,8 @@ internal sealed class RpcClientService {
 
     private readonly IRpcClientSessionProvider _sessionProvider;
     private string? _token;
+
+    private readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(RpcClientService));
 
     private Uri? _baseUrl;
     private string? _identityPrompt;
@@ -56,8 +59,7 @@ internal sealed class RpcClientService {
             return true;
         }
         catch (Exception ex) {
-            Debug.LogException(ex);
-            Debug.LogError("Connection is not valid. Disconnecting.");
+            _logger.LogError(ex, "Connection is not valid. Disconnecting.");
             await DisconnectAsync();
         }
 
@@ -171,8 +173,7 @@ internal sealed class RpcClientService {
             await _sessionProvider.SetSessionAsync(new RpcClientSession(_baseUrl.ToString(), _token));
         }
         catch (Exception ex) {
-            Debug.LogException(ex);
-            Debug.LogError("Failed to validate token, disconnecting.");
+            _logger.LogError(ex, "Failed to validate token, disconnecting.");
 
             await ForgetAndDisconnectAsync();
             return;
@@ -259,7 +260,7 @@ internal sealed class RpcClientService {
 
         var response = await _httpClient.SendAsync(request);
         if (response.StatusCode == HttpStatusCode.Unauthorized) {
-            Debug.LogWarning("Unauthorized response, disconnecting.");
+            _logger.LogWarning("Unauthorized response, disconnecting.");
             await ForgetAndDisconnectAsync();
 
             throw new InvalidOperationException("Unauthorized response.");

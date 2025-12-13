@@ -2,6 +2,7 @@
 using VRChatContentManagerConnect.Editor;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
     [HarmonyPatch]
@@ -17,6 +18,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
         public override bool IsDefaultEnabled => true;
 
         private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.redirect-world-upload-api");
+        private static readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(RedirectUploadApiPatch));
 
         public override void Patch() {
             _harmony.PatchAll(typeof(RedirectUploadApiPatch));

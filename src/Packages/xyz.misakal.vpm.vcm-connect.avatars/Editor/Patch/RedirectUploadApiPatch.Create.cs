@@ -29,7 +29,7 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         #if VCCM_AVATAR_SDK_3_9_0_OR_NEWER
             var app = ConnectEditorApp.Instance;
             if (app == null) {
-                Debug.LogWarning(
+                _logger.LogWarning(
                     "[VRCCM.Connect] AvatarCreateApiPatch: ConnectEditorApp instance is null. Skipping patch.");
                 return true;
             }
@@ -53,14 +53,14 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 if (rpcClient.State == RpcClientState.Disconnected) {
-                    Debug.Log(
+                    _logger.LogWarning(
                         "[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
 
                     try {
                         await rpcClient.RestoreSessionAsync();
                     }
                     catch (Exception ex) {
-                        Debug.LogError(
+                        _logger.LogError(
                             $"[VRCCM.Connect] Failed to restore RPC session: {ex.Message}");
                         throw;
                     }
@@ -74,12 +74,12 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
                                     "_" + Tools.Platform + "_" + API.GetServerEnvironmentForApiUrl() +
                                     Path.GetExtension(pathToImage);
 
-                Debug.Log($"AvatarId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
+                _logger.LogDebug($"AvatarId: {id} PathToBundle: {pathToBundle} BundleFileName: {bundleFileName}");
 
                 var fileId = await rpcClient.UploadFileAsync(pathToBundle, bundleFileName);
-                Debug.Log("Bundle File Id: " + fileId);
+                _logger.LogDebug("Bundle File Id: " + fileId);
                 var imageFileId = await rpcClient.UploadFileAsync(pathToImage, imageFileName);
-                Debug.Log("Image File Id: " + imageFileId);
+                _logger.LogDebug("Image File Id: " + imageFileId);
 
                 await rpcClient.CreateAvatarPublishTaskAsync(
                     id,
