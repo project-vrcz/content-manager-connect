@@ -2,6 +2,5 @@
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 
 [assembly: ExportYesPatch(typeof(WorldAssetExporterPatch))]
-[assembly: ExportYesPatch(typeof(WorldBundleUploadApiPatch))]
 [assembly: ExportYesPatch(typeof(WorldBuilderApiPatch))]
-[assembly: ExportYesPatch(typeof(WorldCreateApiPatch))]
+[assembly: ExportYesPatch(typeof(RedirectUploadApiPatch))]

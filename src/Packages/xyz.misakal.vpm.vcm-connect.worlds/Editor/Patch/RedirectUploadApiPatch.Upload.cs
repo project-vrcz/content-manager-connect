@@ -12,33 +12,9 @@ using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
-using YesPatchFrameworkForVRChatSdk.PatchApi;
-using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
-    [HarmonyPatch]
-    internal class WorldBundleUploadApiPatch : YesPatchBase {
-        public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.redirect-update-to-content-manager";
-        public override string DisplayName => "Redirect Worlds Update to Content Manager";
-
-        public override string Description =>
-            "Redirects worlds bundle update requests to VRChat Content Manager when enabled in settings.";
-
-        public override string Category => PatchConst.Category;
-
-        public override bool IsDefaultEnabled => true;
-
-        private readonly Harmony _harmony =
-            new("xyz.misakal.vpm.vcm-connect.worlds.redirect-update-to-content-manager");
-
-        public override void Patch() {
-            _harmony.PatchAll(typeof(WorldBundleUploadApiPatch));
-        }
-
-        public override void UnPatch() {
-            _harmony.UnpatchSelf();
-        }
-
+    internal partial class RedirectUploadApiPatch {
         // public static async Task<VRCWorld> UpdateWorldBundle(
         // string id, VRCWorld data, string pathToBundle, string worldSignature, 
         // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
@@ -46,7 +22,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
             typeof(string), typeof(VRCWorld), typeof(string), typeof(string),
             typeof(Action<string, float>), typeof(CancellationToken))]
         [HarmonyPrefix]
-        internal static bool Prefix(ref Task<VRCWorld> __result,
+        internal static bool UpdateWorldBundlePrefix(ref Task<VRCWorld> __result,
             string id, VRCWorld data, string pathToBundle, string worldSignature,
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default
