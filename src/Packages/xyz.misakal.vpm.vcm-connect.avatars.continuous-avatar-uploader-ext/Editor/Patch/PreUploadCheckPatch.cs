@@ -2,16 +2,40 @@
 using HarmonyLib;
 using UnityEditor;
 using VRChatContentManagerConnect.Editor;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 using Uploader = Anatawa12.ContinuousAvatarUploader.Editor.ContinuousAvatarUploader;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader.Patch;
 
-[HarmonyPatch(typeof(Uploader), "DoStartUpload")]
-internal static class PreUploadCheckPatch {
+internal class PreUploadCheckPatch : YesPatchBase {
+    public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext.pre-upload-check";
+    public override string DisplayName => "Pre-Upload Check";
+
+    public override string Description =>
+        "Check RPC connection before uploading an avatar from Continuous Avatar Uploader.";
+
+    public override string Category => CauPatchConst.Category;
+
+    public override bool IsDefaultEnabled => true;
+
+    private readonly Harmony _harmony =
+        new("xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext.pre-upload-check");
+
+    public override void Patch() {
+        _harmony.PatchAll(typeof(PreUploadCheckPatch));
+    }
+
+    public override void UnPatch() {
+        _harmony.UnpatchSelf();
+    }
+
     private static MethodInfo? DoStartUploadMethod;
 
     private static bool _isCheckSucceed;
 
+    [HarmonyPatch(typeof(Uploader), "DoStartUpload")]
+    [HarmonyPrefix]
     private static bool Prefix(Uploader? __instance) {
         if (PreUploadCheck.IsTaskRunning)
             return false;

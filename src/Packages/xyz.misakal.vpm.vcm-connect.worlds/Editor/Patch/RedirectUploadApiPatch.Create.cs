@@ -13,14 +13,15 @@ using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
-    // public static async Task<VRCWorld> CreateNewWorld(
-    // string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
-    // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.CreateNewWorld),
-        typeof(string), typeof(VRCWorld), typeof(string), typeof(string), typeof(string),
-        typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class WorldCreateApiPatch {
-        internal static bool Prefix(ref Task<VRCWorld> __result,
+    internal partial class RedirectUploadApiPatch {
+        // public static async Task<VRCWorld> CreateNewWorld(
+        // string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
+        // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.CreateNewWorld),
+            typeof(string), typeof(VRCWorld), typeof(string), typeof(string), typeof(string),
+            typeof(Action<string, float>), typeof(CancellationToken))]
+        [HarmonyPrefix]
+        internal static bool CreateNewWorldPrefix(ref Task<VRCWorld> __result,
             string id, VRCWorld data, string pathToBundle, string pathToImage, string worldSignature,
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default

@@ -13,13 +13,16 @@ using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
-    // public static async Task<VRCAvatar> UpdateAvatarBundle(
-    // string id, VRCAvatar data, string pathToBundle,
-    // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateAvatarBundle),
-        typeof(string), typeof(VRCAvatar), typeof(string), typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class AvatarBundleUploadApiPatch {
-        internal static bool Prefix(ref Task<VRCAvatar> __result,
+    internal partial class RedirectUploadApiPatch {
+        // public static async Task<VRCAvatar> UpdateAvatarBundle(
+        // string id, VRCAvatar data, string pathToBundle,
+        // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateAvatarBundle),
+            typeof(string), typeof(VRCAvatar), typeof(string), typeof(Action<string, float>),
+            typeof(CancellationToken))]
+        [HarmonyPrefix]
+        internal static bool UploadAvatarBundlePrefix(
+            ref Task<VRCAvatar> __result,
             string id, VRCAvatar data, string pathToBundle,
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default

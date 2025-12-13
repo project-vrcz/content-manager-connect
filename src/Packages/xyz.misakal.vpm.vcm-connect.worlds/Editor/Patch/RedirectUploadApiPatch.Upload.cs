@@ -14,14 +14,15 @@ using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
-    // public static async Task<VRCWorld> UpdateWorldBundle(
-    // string id, VRCWorld data, string pathToBundle, string worldSignature, 
-    // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
-    [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateWorldBundle),
-        typeof(string), typeof(VRCWorld), typeof(string), typeof(string),
-        typeof(Action<string, float>), typeof(CancellationToken))]
-    internal static class WorldBundleUploadApiPatch {
-        internal static bool Prefix(ref Task<VRCWorld> __result,
+    internal partial class RedirectUploadApiPatch {
+        // public static async Task<VRCWorld> UpdateWorldBundle(
+        // string id, VRCWorld data, string pathToBundle, string worldSignature, 
+        // Action<string, float> onProgress = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCApi), nameof(VRCApi.UpdateWorldBundle),
+            typeof(string), typeof(VRCWorld), typeof(string), typeof(string),
+            typeof(Action<string, float>), typeof(CancellationToken))]
+        [HarmonyPrefix]
+        internal static bool UpdateWorldBundlePrefix(ref Task<VRCWorld> __result,
             string id, VRCWorld data, string pathToBundle, string worldSignature,
             Action<string, float> onProgress = null,
             CancellationToken cancellationToken = default
@@ -59,13 +60,13 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                 var currentUserId = APIUser.CurrentUser?.id;
                 if (currentUserId is null)
                     throw new InvalidOperationException("Current user is not logged in.");
-                
+
                 // Send Bundle File to App, Start new task
 
                 var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
                 if (rpcClient.State == RpcClientState.Disconnected) {
                     Debug.Log("[VRCCM.Connect] RPC client is disconnected. Attempting to restore session...");
-                    
+
                     try {
                         await rpcClient.RestoreSessionAsync();
                         Debug.Log("[VRCCM.Connect] RPC session restored successfully.");
@@ -73,7 +74,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                     catch (Exception ex) {
                         Debug.LogException(ex);
                         Debug.LogError("[VRCCM.Connect] Failed to restore RPC session. Aborting world bundle upload.");
-                        
+
                         throw new InvalidOperationException("RPC client is not connected.", ex);
                     }
                 }
@@ -101,7 +102,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
                     data.RecommendedCapacity,
                     data.PreviewYoutubeId,
                     data.UdonProducts.ToArray()
-                    ));
+                ));
 
                 return data;
             });

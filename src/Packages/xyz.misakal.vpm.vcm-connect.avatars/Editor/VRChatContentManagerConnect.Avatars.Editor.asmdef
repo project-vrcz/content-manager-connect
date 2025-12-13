@@ -4,7 +4,8 @@
     "references": [
         "GUID:0c9bad51c4b14e6d823198f69a8b83a4",
         "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05",
-        "GUID:b906909fcc54f634db50f2cad0f988d9"
+        "GUID:b906909fcc54f634db50f2cad0f988d9",
+        "GUID:c427fdff1390e954e91e12eb67f5cf3e"
     ],
     "includePlatforms": [
         "Editor"
@@ -13,12 +14,12 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "VCMC.0Harmony.dll",
+        "0Harmony.dll",
         "VRCCore-Editor.dll",
         "VCMC.Microsoft.Extensions.DependencyInjection.Abstractions.dll",
         "VCMC.Microsoft.Extensions.DependencyInjection.dll",
-        "VCMC.Microsoft.Bcl.AsyncInterfaces.dll",
-        "VRCSDK3A-Editor.dll"
+        "VRCSDK3A-Editor.dll",
+        "YPF4VRC.Microsoft.Bcl.AsyncInterfaces.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

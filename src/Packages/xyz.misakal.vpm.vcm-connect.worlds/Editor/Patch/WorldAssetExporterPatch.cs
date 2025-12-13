@@ -11,15 +11,38 @@ using UnityEngine;
 using VRC.SDK3.Editor.Builder;
 using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Services;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
-    [HarmonyPatch(typeof(VRCWorldAssetExporter),
-        nameof(VRCWorldAssetExporter.ExportCurrentSceneResource),
-        typeof(bool), typeof(Action<string>), typeof(Action<object>))]
-    internal static class WorldAssetExporterPatch {
+    [HarmonyPatch]
+    internal class WorldAssetExporterPatch : YesPatchBase {
+        public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.fix-build-failed-due-to-file-delete-failed";
+        public override string DisplayName => "Fix Worlds Build Failed due to File Delete Failed";
+        public override string Description => "Fixes worlds build failures caused by file deletion issues.";
+
+        public override string Category => PatchConst.Category;
+
+        public override bool IsDefaultEnabled => true;
+
+        private readonly Harmony _harmony =
+            new("xyz.misakal.vpm.vcm-connect.worlds.fix-build-failed-due-to-file-delete-failed");
+
+        public override void Patch() {
+            _harmony.PatchAll(typeof(WorldAssetExporterPatch));
+        }
+
+        public override void UnPatch() {
+            _harmony.UnpatchSelf();
+        }
+
+        [HarmonyPatch(typeof(VRCWorldAssetExporter),
+            nameof(VRCWorldAssetExporter.ExportCurrentSceneResource),
+            typeof(bool), typeof(Action<string>), typeof(Action<object>))]
+        [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
             var codes = instructions.ToList();
-            
+
             var codeMatcher = new CodeMatcher(codes)
                 .MatchStartForward(
                     CodeMatch.Calls(() => BuildPipeline.BuildAssetBundles(default, default, default, default)))
@@ -41,7 +64,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
 
             return codeMatcher.Instructions();
         }
-        
+
         private static AssetBundleManifest BuildAssetBundles(string outputPath, AssetBundleBuild[] builds,
             BuildAssetBundleOptions options, BuildTarget target) {
             if (ConnectEditorApp.Instance is { } app) {

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Extensions.DependencyInjection;
-using VRC.SDK3.Editor;
+using UnityEngine;
+using VRC.SDK3A.Editor;
 using VRC.SDKBase.Editor.Api;
 using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Services;
@@ -11,11 +13,11 @@ using VRChatContentManagerConnect.Editor.Services.Rpc;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
-namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
+namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
-    internal class WorldBuilderApiPatch : YesPatchBase {
-        public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.pre-build-and-upload-check";
-        public override string DisplayName => "Pre Build and Upload Check for Worlds";
+    internal class PreUploadCheckPatch : YesPatchBase {
+        public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.pre-build-and-upload-check";
+        public override string DisplayName => "Pre Build and Upload Check for Avatars";
 
         public override string Description =>
             "Prevents build and upload if Content Manager is enabled but not connected.";
@@ -24,28 +26,33 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
 
         public override bool IsDefaultEnabled => true;
 
-        private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.worlds.pre-build-and-upload-check");
+        private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.pre-build-and-upload-check");
 
         public override void Patch() {
-            _harmony.PatchAll(typeof(WorldBuilderApiPatch));
+            _harmony.PatchAll(typeof(PreUploadCheckPatch));
         }
 
         public override void UnPatch() {
             _harmony.UnpatchSelf();
         }
 
-        // public async Task BuildAndUpload(VRCWorld world, string signature, string thumbnailPath = null,
-        // CancellationToken cancellationToken = default)
-    #if VCCM_WORLD_SDK_3_7_2_OR_NEWER
-        [HarmonyPatch(typeof(VRCSdkControlPanelWorldBuilder), nameof(VRCSdkControlPanelWorldBuilder.BuildAndUpload),
-            typeof(VRCWorld), typeof(string), typeof(string), typeof(CancellationToken))]
+    #if VCCM_AVATAR_SDK_3_7_6_OR_NEWER
+        [HarmonyPatch(typeof(VRCSdkControlPanelAvatarBuilder), nameof(VRCSdkControlPanelAvatarBuilder.BuildAndUpload),
+            typeof(GameObject), typeof(List<PerPlatformOverrides.Option>),
+            typeof(VRCAvatar), typeof(string),
+            typeof(CancellationToken))]
     #else
-        [HarmonyPatch(typeof(VRCSdkControlPanelWorldBuilder), nameof(VRCSdkControlPanelWorldBuilder.BuildAndUpload),
-            typeof(VRCWorld), typeof(string), typeof(CancellationToken))]
+        // public async Task BuildAndUpload(
+        // GameObject target, VRCAvatar avatar,
+        // string thumbnailPath = null, CancellationToken cancellationToken = default)
+        [HarmonyPatch(typeof(VRCSdkControlPanelAvatarBuilder), nameof(VRCSdkControlPanelAvatarBuilder.BuildAndUpload),
+            typeof(GameObject), typeof(VRCAvatar),
+            typeof(string), typeof(CancellationToken))]
     #endif
         [HarmonyPrefix]
         public static bool Prefix(ref Task __result) {
             if (ConnectEditorApp.Instance is not { } app) {
+                Debug.LogError("Failed to Build and Upload: VRChat Content Manager Connect is not initialized.");
                 __result = Task.FromException(
                     new InvalidOperationException("VRChat Content Manager Connect is not initialized."));
                 return false;
@@ -57,6 +64,7 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
 
             var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
             if (rpcClient.State != RpcClientState.Connected) {
+                Debug.LogError("Failed to Build and Upload: RPC Client is not connected.");
                 __result = Task.FromException(new InvalidOperationException("RPC Client is not connected."));
                 return false;
             }

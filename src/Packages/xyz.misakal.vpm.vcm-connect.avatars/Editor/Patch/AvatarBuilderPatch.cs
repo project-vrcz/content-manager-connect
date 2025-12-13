@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
@@ -10,14 +8,37 @@ using UnityEngine;
 using VRC.SDK3.Builder;
 using VRChatContentManagerConnect.Editor;
 using VRChatContentManagerConnect.Editor.Services;
+using YesPatchFrameworkForVRChatSdk.PatchApi;
+using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
-    //   private static bool ExportCurrentAvatarResource(
-    // UnityEngine.Object avatarResource, bool testAsset, bool buildAssetBundle,
-    // out string avatarPrefabPath,
-    // Action<string> onProgress = null, Action<object> onContentProcessed = null)
-    [HarmonyPatch(typeof(VRCAvatarBuilder), "ExportCurrentAvatarResource")]
-    internal static class AvatarBuilderPatch {
+    [HarmonyPatch]
+    internal class AvatarBuilderPatch : YesPatchBase {
+        public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.fix-build-failed-due-to-file-delete-failed";
+        public override string DisplayName => "Fix Avatar Build Failed";
+        public override string Description => "Fixes avatar build failures caused by file deletion issues.";
+
+        public override string Category => PatchConst.Category;
+
+        public override bool IsDefaultEnabled => true;
+
+        private readonly Harmony _harmony =
+            new("xyz.misakal.vpm.vcm-connect.avatars.fix-build-failed-due-to-file-delete-failed");
+
+        public override void Patch() {
+            _harmony.PatchAll(typeof(AvatarBuilderPatch));
+        }
+
+        public override void UnPatch() {
+            _harmony.UnpatchSelf();
+        }
+
+        //   private static bool ExportCurrentAvatarResource(
+        // UnityEngine.Object avatarResource, bool testAsset, bool buildAssetBundle,
+        // out string avatarPrefabPath,
+        // Action<string> onProgress = null, Action<object> onContentProcessed = null)
+        [HarmonyPatch(typeof(VRCAvatarBuilder), "ExportCurrentAvatarResource")]
+        [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
             var codes = instructions.ToList();
 
