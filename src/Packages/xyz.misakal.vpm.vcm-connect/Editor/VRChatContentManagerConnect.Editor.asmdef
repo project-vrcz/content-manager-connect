@@ -11,14 +11,12 @@
     "precompiledReferences": [
         "VCMC.Microsoft.Extensions.DependencyInjection.dll",
         "VCMC.Microsoft.Extensions.DependencyInjection.Abstractions.dll",
-        "VCMC.Microsoft.Bcl.AsyncInterfaces.dll",
-        "VCMC.System.Text.Json.dll",
         "VCMC.System.Net.Http.Json.dll",
-        "VCMC.System.IO.Pipelines.dll",
-        "VCMC.System.Text.Encodings.Web.dll",
-        "VCMC.0Harmony.dll",
+        "0Harmony.dll",
         "VRCSDKBase.dll",
-        "VRCSDKBase-Editor.dll"
+        "VRCSDKBase-Editor.dll",
+        "YPF4VRC.System.Text.Json.dll",
+        "YPF4VRC.Microsoft.Bcl.AsyncInterfaces.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],
