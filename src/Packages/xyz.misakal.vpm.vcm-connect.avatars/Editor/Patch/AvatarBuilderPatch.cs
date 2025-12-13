@@ -15,10 +15,8 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
     internal class AvatarBuilderPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.fix-build-failed-due-to-file-delete-failed";
-        public override string DisplayName => "Fix Avatar Build Failed due to File Delete Failed";
-
-        public override string Description =>
-            "Fixes avatar build failures caused by file deletion issues.";
+        public override string DisplayName => "Fix Avatar Build Failed";
+        public override string Description => "Fixes avatar build failures caused by file deletion issues.";
 
         public override string Category => PatchConst.Category;
 

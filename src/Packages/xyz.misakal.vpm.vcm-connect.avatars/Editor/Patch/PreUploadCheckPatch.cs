@@ -15,7 +15,7 @@ using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
-    internal class AvatarBuilderBuildAndUploadApiPatch : YesPatchBase {
+    internal class PreUploadCheckPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.pre-build-and-upload-check";
         public override string DisplayName => "Pre Build and Upload Check for Avatars";
 
@@ -29,7 +29,7 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.pre-build-and-upload-check");
 
         public override void Patch() {
-            _harmony.PatchAll(typeof(AvatarBuilderBuildAndUploadApiPatch));
+            _harmony.PatchAll(typeof(PreUploadCheckPatch));
         }
 
         public override void UnPatch() {
