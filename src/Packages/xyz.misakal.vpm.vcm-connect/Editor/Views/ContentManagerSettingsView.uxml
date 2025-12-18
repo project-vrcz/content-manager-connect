@@ -24,9 +24,15 @@
         <engine:Box class="settings-container">
             <engine:Label class="settings-header" text="Advance Settings" />
             <engine:Toggle name="enable-content-manager-toggle" text="Enable Content Manager Publish Flow" />
+            <engine:Label class="settings-sub-section-header"
+                          text="Auto Launch Local App (If connected to localhost last time and restore connection failed)" />
+            <engine:Toggle name="enable-auto-start-app-when-launch-toggle"
+                           text="When Startup" />
+            <engine:Toggle name="enable-auto-start-app-when-reconnect-toggle"
+                           text="When Reconnect (Click Reconnect Button or start upload by CAU if CAU extension is installed)" />
             <engine:TextField name="client-name-inputfield" label="Client Name" />
             <engine:VisualElement class="client-id-container">
-                <engine:Label text="Client ID: "/>
+                <engine:Label text="Client ID: " />
                 <engine:Label name="client-id-label" text="CLIENT_ID" />
             </engine:VisualElement>
         </engine:Box>

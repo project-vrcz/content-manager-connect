@@ -6,7 +6,10 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
+using VRChatContentManagerConnect.Editor.Exceptions;
+using VRChatContentManagerConnect.Editor.Extensions;
 using VRChatContentManagerConnect.Editor.Models;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Request;
 using VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
@@ -30,6 +33,8 @@ internal sealed class RpcClientService {
     private string? _token;
 
     private readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(RpcClientService));
+    private readonly AppSettingsService _appSettingsService;
+    private readonly AppSettings _appSettings;
 
     private Uri? _baseUrl;
     private string? _identityPrompt;
@@ -40,11 +45,18 @@ internal sealed class RpcClientService {
         RespectNullableAnnotations = true
     };
 
-    public RpcClientService(IRpcClientIdProvider clientIdProvider, IRpcClientSessionProvider sessionProvider) {
+    public RpcClientService(
+        IRpcClientIdProvider clientIdProvider,
+        IRpcClientSessionProvider sessionProvider,
+        AppSettingsService appSettingsService
+    ) {
         _clientIdProvider = clientIdProvider;
         _sessionProvider = sessionProvider;
+        _appSettingsService = appSettingsService;
         _clientId = clientIdProvider.GetClientId();
         _httpClient = new HttpClient();
+
+        _appSettings = _appSettingsService.GetSettings();
 
         _httpClient.DefaultRequestHeaders.UserAgent.Add(
             new ProductInfoHeaderValue(new ProductHeaderValue("VRChatContentManager.ConnectEditorApp", "snapshot")));
@@ -71,24 +83,23 @@ internal sealed class RpcClientService {
     }
 
     public async Task RestoreSessionAsync() {
+        var shouldLaunchApp = _appSettings.LaunchAppWhenReconnect;
+        await RestoreSessionAsync(true, shouldLaunchApp);
+    }
+
+    public async Task RestoreSessionAsync(bool showProgressDialog, bool launchApp) {
         var session = await _sessionProvider.GetSessionsAsync();
 
         if (session is null) {
             throw new InvalidOperationException("No session to restore.");
         }
 
+        using var progress = new SimpleProgressScope("Restoring RPC Client Session", showDialog: showProgressDialog);
+
         var hostUri = new Uri(session.Host);
+        await RestoreSessionAsyncCore(session, launchApp, progressText => progress.Report(progressText));
+
         var metadata = await GetMetadataAsync(hostUri);
-
-        var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/auth/metadata"));
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Token);
-
-        var response = await _httpClient.SendAsync(request);
-        response.EnsureSuccessStatusCode();
-
-        var authMetadata = await response.Content.ReadFromJsonAsync<AuthMetadataResponse>();
-        if (authMetadata is null)
-            throw new Exception("Invalid response from server.");
 
         _httpClient.BaseAddress = hostUri;
         _token = session.Token;
@@ -97,6 +108,104 @@ internal sealed class RpcClientService {
         InstanceName = metadata.InstanceName;
 
         ChangeState(RpcClientState.Connected);
+    }
+
+    private async Task RestoreSessionAsyncCore(
+        RpcClientSession session,
+        bool launchApp,
+        Action<string>? reportProgress = null
+    ) {
+        var hostUri = new Uri(session.Host);
+
+        reportProgress?.Invoke("Try requesting auth metadata from existing instance (if have)...");
+        try {
+            await GetAuthMetadataForSessionAsync(session);
+            // Successfully restored session
+            return;
+        }
+        catch (Exception ex) when (ex is not InvalidStatusCodeException && ex is not InvalidResponseException) {
+            if (hostUri.Host != "localhost" && hostUri.Host != "127.0.0.1" && hostUri.Host != "[::1]")
+                throw;
+
+            if (!launchApp)
+                return;
+
+            _logger.LogWarning(ex, "Failed to restore session to local RPC server, trying to launch local app.");
+        }
+
+        reportProgress?.Invoke("Trying to launch local VRChat Content Manager App...");
+        TryLaunchLocalApp();
+        // 3 seconds should be enough, unless user running on a potato PC
+        await Task.Delay(TimeSpan.FromSeconds(3));
+
+        for (var attempt = 0; attempt < 5; attempt++) {
+            reportProgress?.Invoke($"Attempt {attempt + 1} to restore session to App.");
+            try {
+                await GetAuthMetadataForSessionAsync(session);
+                break;
+            }
+            catch (Exception ex) when (ex is not InvalidStatusCodeException && ex is not InvalidResponseException) {
+                _logger.LogWarning(ex, $"Attempt {attempt + 1} to restore session to local RPC server failed.");
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
+
+        reportProgress?.Invoke("Checking if instance is ready for publish...");
+        try {
+            if (await IsInstanceReadyForPublish(session))
+                return;
+        }
+        catch (NotSupportedException) {
+            _logger.LogWarning("Instance does not support ready-for-publish check. Assuming it's ready.");
+            return;
+        }
+
+        await Task.Delay(TimeSpan.FromSeconds(3));
+        for (var attempt = 0; attempt < 5; attempt++) {
+            reportProgress?.Invoke($"Attempt {attempt + 1} to check if instance is ready for publish...");
+            if (await IsInstanceReadyForPublish(session))
+                return;
+
+            _logger.LogWarning($"Attempt {attempt + 1} to check if instance is ready for publish failed.");
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
+
+        _logger.LogWarning("Instance is not ready for publish after multiple attempts. Proceeding anyway.");
+    }
+
+    private async ValueTask<AuthMetadataResponse> GetAuthMetadataForSessionAsync(RpcClientSession session) {
+        var hostUri = new Uri(session.Host);
+        var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/auth/metadata"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Token);
+
+        var response = await _httpClient.SendAsync(request);
+        if (response.StatusCode != HttpStatusCode.OK)
+            throw new InvalidStatusCodeException();
+
+        var authMetadata = await response.Content.ReadFromJsonAsync<AuthMetadataResponse>();
+        if (authMetadata is null)
+            throw new InvalidResponseException();
+
+        return authMetadata;
+    }
+
+    private async ValueTask<bool> IsInstanceReadyForPublish(RpcClientSession session) {
+        var hostUri = new Uri(session.Host);
+        var request = new HttpRequestMessage(HttpMethod.Get, new Uri(hostUri, "/v1/health/ready-for-publish"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", session.Token);
+
+        var response = await _httpClient.SendAsync(request);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            throw new NotSupportedException("Instance does not support ready-for-publish check.");
+
+        return response.StatusCode == HttpStatusCode.NoContent;
+    }
+
+    private void TryLaunchLocalApp() {
+        MainThreadDispatcher.Dispatch(() =>
+            Application.OpenURL("vrchat-content-manager://launch")
+        );
     }
 
     public string GetClientId() {
@@ -115,7 +224,7 @@ internal sealed class RpcClientService {
 
         var responseBody = await response.Content.ReadFromJsonAsync<MetadataResponse>(_serializerOptions);
         if (responseBody is null)
-            throw new Exception("Invalid response from server.");
+            throw new InvalidResponseException();
 
         return responseBody;
     }

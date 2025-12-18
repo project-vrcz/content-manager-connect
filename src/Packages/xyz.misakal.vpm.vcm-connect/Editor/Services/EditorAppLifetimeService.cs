@@ -24,10 +24,10 @@ internal sealed class EditorAppLifetimeService {
 
     public async Task StartAsync() {
         _menuItemService.Init();
-        _appSettingsService.GetSettings();
+        var settings = _appSettingsService.GetSettings();
 
         try {
-            await _rpcClientService.RestoreSessionAsync();
+            await _rpcClientService.RestoreSessionAsync(false, settings.LaunchAppWhenStartup);
         }
         catch (Exception ex) {
             _logger.LogDebug(ex, "Failed to auto restore session");
