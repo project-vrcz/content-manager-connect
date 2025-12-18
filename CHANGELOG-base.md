@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Auto Launch App when reconnect. [`#56`](https://github.com/project-vrcz/content-manager-connect/pull/56)
+  - Allow control over whether the app launches when reconnected at startup.
+
 ### Changed
 
 - Migrate to Yes! Patch Framework. [`#50`](https://github.com/project-vrcz/content-manager-connect/pull/50)
