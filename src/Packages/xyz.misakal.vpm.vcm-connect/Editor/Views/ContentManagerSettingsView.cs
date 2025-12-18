@@ -23,6 +23,9 @@ internal sealed class ContentManagerSettingsView : VisualElement {
 
     private readonly Label _clientIdLabel;
 
+    private readonly Toggle _enableLaunchAppWhenStartupToggle;
+    private readonly Toggle _enableLaunchAppWhenReconnectToggle;
+
     private readonly Toggle _enableContentManagerPublishFlowToggle;
     private readonly TextField _clientNameInputField;
 
@@ -48,6 +51,9 @@ internal sealed class ContentManagerSettingsView : VisualElement {
         _noRequiredPackageInstalledContainer = this.Q<VisualElement>("no-required-packages-installed-container");
 
         _clientIdLabel = this.Q<Label>("client-id-label");
+
+        _enableLaunchAppWhenReconnectToggle = this.Q<Toggle>("enable-auto-start-app-when-reconnect-toggle");
+        _enableLaunchAppWhenStartupToggle = this.Q<Toggle>("enable-auto-start-app-when-launch-toggle");
 
         _enableContentManagerPublishFlowToggle = this.Q<Toggle>("enable-content-manager-toggle");
         _clientNameInputField = this.Q<TextField>("client-name-inputfield");
@@ -78,6 +84,19 @@ internal sealed class ContentManagerSettingsView : VisualElement {
 
         _appSettingsService = app.ServiceProvider.GetRequiredService<AppSettingsService>();
         _appSettings = _appSettingsService.GetSettings();
+
+        _enableLaunchAppWhenStartupToggle.value = _appSettings.LaunchAppWhenStartup;
+        _enableLaunchAppWhenReconnectToggle.value = _appSettings.LaunchAppWhenReconnect;
+
+        _enableLaunchAppWhenStartupToggle.RegisterValueChangedCallback(args => {
+            _appSettings.LaunchAppWhenStartup = args.newValue;
+            _appSettingsService.SaveSettings();
+        });
+
+        _enableLaunchAppWhenReconnectToggle.RegisterValueChangedCallback(args => {
+            _appSettings.LaunchAppWhenReconnect = args.newValue;
+            _appSettingsService.SaveSettings();
+        });
 
         _enableContentManagerPublishFlowToggle.value = _appSettings.UseContentManager;
         _enableContentManagerPublishFlowToggle.RegisterValueChangedCallback(args => {
