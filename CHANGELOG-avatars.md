@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Auto reconnect when using SDK builder panel Build and upload or SDK API `BuildAndUpload()`. [`#60`](https://github.com/project-vrcz/content-manager-connect/pull/60)
+
+### Fixed
+
+- Compile error in avatar SDK lower than 3.8.1 [`#60`](https://github.com/project-vrcz/content-manager-connect/pull/60)
+
 ## [0.2.0] - 2025-12-18
 
 ### Changed
