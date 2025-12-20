@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
-using Microsoft.Extensions.DependencyInjection;
 using UnityEngine;
 using VRC.SDK3A.Editor;
 using VRC.SDKBase.Editor.Api;
 using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Services;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
-using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
 namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
@@ -28,7 +24,6 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
         public override bool IsDefaultEnabled => true;
 
         private readonly Harmony _harmony = new("xyz.misakal.vpm.vcm-connect.avatars.pre-build-and-upload-check");
-        private static readonly YesLogger _logger = new(LoggerConst.LoggerPrefix + nameof(PreUploadCheckPatch));
 
         public override void Patch() {
             _harmony.PatchAll(typeof(PreUploadCheckPatch));
@@ -38,40 +33,61 @@ namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
             _harmony.UnpatchSelf();
         }
 
-    #if VCCM_AVATAR_SDK_3_7_6_OR_NEWER
+        [HarmonyPrefix]
+    #if VCCM_AVATAR_SDK_3_8_1_OR_NEWER
         [HarmonyPatch(typeof(VRCSdkControlPanelAvatarBuilder), nameof(VRCSdkControlPanelAvatarBuilder.BuildAndUpload),
             typeof(GameObject), typeof(List<PerPlatformOverrides.Option>),
             typeof(VRCAvatar), typeof(string),
             typeof(CancellationToken))]
     #else
-        // public async Task BuildAndUpload(
-        // GameObject target, VRCAvatar avatar,
-        // string thumbnailPath = null, CancellationToken cancellationToken = default)
         [HarmonyPatch(typeof(VRCSdkControlPanelAvatarBuilder), nameof(VRCSdkControlPanelAvatarBuilder.BuildAndUpload),
             typeof(GameObject), typeof(VRCAvatar),
             typeof(string), typeof(CancellationToken))]
     #endif
-        [HarmonyPrefix]
-        public static bool Prefix(ref Task __result) {
-            if (ConnectEditorApp.Instance is not { } app) {
-                _logger.LogError("Failed to Build and Upload: VRChat Content Manager Connect is not initialized.");
-                __result = Task.FromException(
-                    new InvalidOperationException("VRChat Content Manager Connect is not initialized."));
-                return false;
-            }
+        public static bool Prefix(ref Task __result, VRCSdkControlPanelAvatarBuilder __instance, object[] __args) {
+            var originalUploadMethod = AccessTools.Method(typeof(PreUploadCheckPatch), nameof(OriginalBuildAndUpload));
+            __result = RunPreUploadCheckAsync(() => {
+                var fullArgs = new List<object> { __instance };
+                fullArgs.AddRange(__args);
 
-            var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
-            if (!settings.GetSettings().UseContentManager)
-                return true;
+                return (Task)originalUploadMethod.Invoke(null, fullArgs.ToArray());
+            });
 
-            var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
-            if (rpcClient.State != RpcClientState.Connected) {
-                _logger.LogError("Failed to Build and Upload: RPC Client is not connected.");
-                __result = Task.FromException(new InvalidOperationException("RPC Client is not connected."));
-                return false;
-            }
+            return false;
+        }
 
-            return true;
+        private static async Task RunPreUploadCheckAsync(Func<Task> uploadAction) {
+            await PreUploadCheck.PreUploadCheckAsync();
+            await uploadAction();
+        }
+
+        [HarmonyReversePatch(HarmonyReversePatchType.Snapshot)]
+    #if VCCM_AVATAR_SDK_3_8_1_OR_NEWER
+        [HarmonyPatch(typeof(VRCSdkControlPanelAvatarBuilder), nameof(VRCSdkControlPanelAvatarBuilder.BuildAndUpload),
+            typeof(GameObject), typeof(List<PerPlatformOverrides.Option>),
+            typeof(VRCAvatar), typeof(string),
+            typeof(CancellationToken))]
+        private static Task OriginalBuildAndUpload(
+            object instance,
+            GameObject target,
+            List<PerPlatformOverrides.Option> overrides,
+            VRCAvatar avatar,
+            string thumbnailPath = null,
+            CancellationToken cancellationToken = default)
+    #else
+        [HarmonyPatch(typeof(VRCSdkControlPanelAvatarBuilder), nameof(VRCSdkControlPanelAvatarBuilder.BuildAndUpload),
+            typeof(GameObject), typeof(VRCAvatar),
+            typeof(string), typeof(CancellationToken))]
+        private static Task OriginalBuildAndUpload(
+            object instance,
+            GameObject target,
+            VRCAvatar avatar,
+            string thumbnailPath = null,
+            CancellationToken cancellationToken = default)
+    #endif
+        {
+            // stub method, will be replaced by original method
+            throw new NotImplementedException("This is a stub for the original method.");
         }
     }
 }

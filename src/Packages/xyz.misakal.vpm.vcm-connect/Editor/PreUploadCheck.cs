@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
+using VRChatContentManagerConnect.Editor.Exceptions.PreUploadCheck;
 using VRChatContentManagerConnect.Editor.Services;
 using VRChatContentManagerConnect.Editor.Services.Rpc;
 
@@ -92,6 +93,27 @@ internal static class PreUploadCheck {
                 IsTaskRunning = false;
                 continueUpload();
             });
+        }
+    }
+
+    public static async Task PreUploadCheckAsync() {
+        if (ConnectEditorApp.Instance is not { } app)
+            throw new InvalidOperationException("VRChat Content Manager Connect is not initialized.");
+
+        var rpcClientService = app.ServiceProvider.GetRequiredService<RpcClientService>();
+
+        if (await rpcClientService.IsConnectionValidAsync())
+            return;
+
+        var canRestoreSession = await CanRestoreSessionAsync(rpcClientService);
+        if (!canRestoreSession)
+            throw new NoSessionToRestoreException();
+
+        try {
+            await rpcClientService.RestoreSessionAsync();
+        }
+        catch (Exception ex) {
+            throw new RestoreSessionFailedException(ex);
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -44,24 +45,39 @@ namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
             typeof(VRCWorld), typeof(string), typeof(CancellationToken))]
     #endif
         [HarmonyPrefix]
-        public static bool Prefix(ref Task __result) {
-            if (ConnectEditorApp.Instance is not { } app) {
-                __result = Task.FromException(
-                    new InvalidOperationException("VRChat Content Manager Connect is not initialized."));
-                return false;
-            }
+        public static bool Prefix(ref Task __result, VRCSdkControlPanelWorldBuilder __instance, object[] __args) {
+            var originalUploadMethod = AccessTools.Method(typeof(WorldBuilderApiPatch), nameof(OriginalBuildAndUpload));
+            __result = RunPreUploadCheckAsync(() => {
+                var fullArgs = new List<object> { __instance };
+                fullArgs.AddRange(__args);
 
-            var settings = app.ServiceProvider.GetRequiredService<AppSettingsService>();
-            if (!settings.GetSettings().UseContentManager)
-                return true;
+                return (Task)originalUploadMethod.Invoke(null, fullArgs.ToArray());
+            });
 
-            var rpcClient = app.ServiceProvider.GetRequiredService<RpcClientService>();
-            if (rpcClient.State != RpcClientState.Connected) {
-                __result = Task.FromException(new InvalidOperationException("RPC Client is not connected."));
-                return false;
-            }
+            return false;
+        }
 
-            return true;
+        private static async Task RunPreUploadCheckAsync(Func<Task> uploadAction) {
+            await PreUploadCheck.PreUploadCheckAsync();
+            await uploadAction();
+        }
+
+        [HarmonyReversePatch]
+    #if VCCM_WORLD_SDK_3_7_2_OR_NEWER
+        [HarmonyPatch(typeof(VRCSdkControlPanelWorldBuilder), nameof(VRCSdkControlPanelWorldBuilder.BuildAndUpload),
+            typeof(VRCWorld), typeof(string), typeof(string), typeof(CancellationToken))]
+        private static Task OriginalBuildAndUpload(object instance, VRCWorld world,
+            string signature, string thumbnailPath = null,
+            CancellationToken cancellationToken = default)
+    #else
+        [HarmonyPatch(typeof(VRCSdkControlPanelWorldBuilder), nameof(VRCSdkControlPanelWorldBuilder.BuildAndUpload),
+            typeof(VRCWorld), typeof(string), typeof(CancellationToken))]
+        private static Task OriginalBuildAndUpload(object instance, VRCWorld world, string thumbnailPath = null,
+            CancellationToken cancellationToken = default)
+    #endif
+        {
+            // This is never called
+            throw new NotImplementedException("It's a reverse patch stub.");
         }
     }
 }
