@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-12-27
+
 ### Changed
 
 - Rename to `VRChat Content Publisher Connect - Avatars`. [`63`](https://github.com/project-vrcz/content-publisher-connect/pull/63)
@@ -66,7 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow Create and Update avatars using content manager.
 - Allow Create new Content. [`#17`](https://github.com/project-vrcz/content-publisher-connect/pull/17)
 
-[unreleased]: https://github.com/project-vrcz/content-publisher-connect/compare/avatars-v0.2.0...HEAD
+[unreleased]: https://github.com/project-vrcz/content-publisher-connect/compare/avatars-v0.3.0...HEAD
+[0.3.0]: https://github.com/project-vrcz/content-publisher-connect/compare/avatars-v0.2.0...avatars-v0.3.0
 [0.2.0]: https://github.com/project-vrcz/content-publisher-connect/compare/avatars-v0.2.0-beta.2...avatars-v0.2.0
 [0.2.0-beta.2]: https://github.com/project-vrcz/content-publisher-connect/compare/avatars-v0.2.0-beta.1...avatars-v0.2.0-beta.2
 [0.2.0-beta.1]: https://github.com/project-vrcz/content-publisher-connect/compare/avatars-v0.1.1...avatars-v0.2.0-beta.1
