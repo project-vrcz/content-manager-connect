@@ -1,17 +1,17 @@
 ﻿using HarmonyLib;
-using VRChatContentManagerConnect.Editor;
+using VRChatContentPublisherConnect.Editor;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
+namespace VRChatContentPublisherConnect.Worlds.Editor.Patch {
     [HarmonyPatch]
     internal partial class RedirectUploadApiPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.redirect-world-upload-api";
-        public override string DisplayName => "Redirect World Upload to Content Manager";
+        public override string DisplayName => "Redirect World Upload to Content Publisher";
 
         public override string Description =>
-            "Redirects world upload requests to VRChat Content Manager when enabled in settings.";
+            "Redirects world upload requests to VRChat Content Publisher when enabled in settings.";
 
         public override string Category => PatchConst.Category;
 

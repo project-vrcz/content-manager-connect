@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 using HarmonyLib;
 using UnityEditor;
-using VRChatContentManagerConnect.Editor;
+using VRChatContentPublisherConnect.Editor;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 using Uploader = Anatawa12.ContinuousAvatarUploader.Editor.ContinuousAvatarUploader;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader.Patch;
+namespace VRChatContentPublisherConnect.Avatars.Editor.ContinuousAvatarUploader.Patch;
 
 internal class PreUploadCheckPatch : YesPatchBase {
     public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.continuous-avatar-uploader-ext.pre-upload-check";

@@ -1,4 +1,4 @@
-﻿using VRChatContentManagerConnect.Avatars.Editor.Patch;
+﻿using VRChatContentPublisherConnect.Avatars.Editor.Patch;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 
 [assembly: ExportYesPatch(typeof(RedirectUploadApiPatch))]

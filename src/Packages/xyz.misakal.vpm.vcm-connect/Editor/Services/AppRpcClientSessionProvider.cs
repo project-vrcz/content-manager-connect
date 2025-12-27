@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using VRChatContentManagerConnect.Editor.Models;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Models;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Editor.Services;
+namespace VRChatContentPublisherConnect.Editor.Services;
 
 internal sealed class AppRpcClientSessionProvider : IRpcClientSessionProvider {
     public async ValueTask<RpcClientSession?> GetSessionsAsync() {

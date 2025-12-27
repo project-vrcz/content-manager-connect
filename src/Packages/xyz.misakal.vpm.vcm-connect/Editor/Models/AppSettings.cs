@@ -1,4 +1,4 @@
-﻿namespace VRChatContentManagerConnect.Editor.Models;
+﻿namespace VRChatContentPublisherConnect.Editor.Models;
 
 internal sealed class AppSettings {
     public bool UseContentManager { get; set; } = true;

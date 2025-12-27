@@ -2,17 +2,16 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.UIElements;
-using VRChatContentManagerConnect.Editor.Models;
-using VRChatContentManagerConnect.Editor.Services;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
-using VRChatContentManagerConnect.Editor.Views.Pages.Connected;
-using VRChatContentManagerConnect.Editor.Views.Pages.NewConnection;
-using VRChatContentManagerConnect.Editor.Views.Pages.Reconnect;
+using VRChatContentPublisherConnect.Editor.Models;
+using VRChatContentPublisherConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Views.Pages.Connected;
+using VRChatContentPublisherConnect.Editor.Views.Pages.NewConnection;
+using VRChatContentPublisherConnect.Editor.Views.Pages.Reconnect;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Editor.Views;
+namespace VRChatContentPublisherConnect.Editor.Views;
 
 internal sealed class ContentManagerSettingsView : VisualElement {
     private const string VisualTreeAssetGuid = "56cbde71eccc3d24d85b8e0020fefc67";
@@ -73,8 +72,8 @@ internal sealed class ContentManagerSettingsView : VisualElement {
     #endif
 
         if (ConnectEditorApp.Instance is not { } app) {
-            _logger.LogError("VRChat Content Manager Connect App is not initialized.");
-            throw new InvalidOperationException("VRChat Content Manager Connect App is not initialized.");
+            _logger.LogError("VRChat Content Publisher Connect App is not initialized.");
+            throw new InvalidOperationException("VRChat Content Publisher Connect App is not initialized.");
         }
 
         _rpcClientService = app.ServiceProvider.GetRequiredService<RpcClientService>();

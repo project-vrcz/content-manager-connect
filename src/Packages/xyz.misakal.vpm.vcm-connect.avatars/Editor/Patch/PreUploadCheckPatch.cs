@@ -6,11 +6,11 @@ using HarmonyLib;
 using UnityEngine;
 using VRC.SDK3A.Editor;
 using VRC.SDKBase.Editor.Api;
-using VRChatContentManagerConnect.Editor;
+using VRChatContentPublisherConnect.Editor;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
+namespace VRChatContentPublisherConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
     internal class PreUploadCheckPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.pre-build-and-upload-check";

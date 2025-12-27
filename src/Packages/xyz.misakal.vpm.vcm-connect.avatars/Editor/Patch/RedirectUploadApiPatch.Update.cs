@@ -8,11 +8,11 @@ using UnityEngine;
 using VRC;
 using VRC.Core;
 using VRC.SDKBase.Editor.Api;
-using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Services;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor;
+using VRChatContentPublisherConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
+namespace VRChatContentPublisherConnect.Avatars.Editor.Patch {
     internal partial class RedirectUploadApiPatch {
         // public static async Task<VRCAvatar> UpdateAvatarBundle(
         // string id, VRCAvatar data, string pathToBundle,

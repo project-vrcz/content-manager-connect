@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Text.Json;
-using VRChatContentManagerConnect.Editor.Models;
+using VRChatContentPublisherConnect.Editor.Models;
 
-namespace VRChatContentManagerConnect.Editor.Services;
+namespace VRChatContentPublisherConnect.Editor.Services;
 
 internal sealed class AppSettingsService {
     private AppSettings? _settings;

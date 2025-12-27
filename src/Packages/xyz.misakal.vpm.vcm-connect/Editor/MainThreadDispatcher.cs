@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using UnityEditor;
 
-namespace VRChatContentManagerConnect.Editor;
+namespace VRChatContentPublisherConnect.Editor;
 
 internal static class MainThreadDispatcher {
     private static readonly ConcurrentQueue<Action> Queue = new();

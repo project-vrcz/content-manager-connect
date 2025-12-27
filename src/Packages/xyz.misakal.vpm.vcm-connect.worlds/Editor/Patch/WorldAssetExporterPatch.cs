@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
 using VRC.SDK3.Editor.Builder;
-using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor;
+using VRChatContentPublisherConnect.Editor.Services;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
-namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
+namespace VRChatContentPublisherConnect.Worlds.Editor.Patch {
     [HarmonyPatch]
     internal class WorldAssetExporterPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.fix-build-failed-due-to-file-delete-failed";

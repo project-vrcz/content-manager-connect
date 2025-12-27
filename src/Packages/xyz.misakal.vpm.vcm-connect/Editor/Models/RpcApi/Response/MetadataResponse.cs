@@ -1,4 +1,4 @@
-﻿namespace VRChatContentManagerConnect.Editor.Models.RpcApi.Response;
+﻿namespace VRChatContentPublisherConnect.Editor.Models.RpcApi.Response;
 
 public record MetadataResponse(
     string InstanceName,

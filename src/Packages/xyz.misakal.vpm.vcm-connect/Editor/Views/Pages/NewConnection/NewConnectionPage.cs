@@ -1,11 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using UnityEngine;
 using UnityEngine.UIElements;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Editor.Views.Pages.NewConnection;
+namespace VRChatContentPublisherConnect.Editor.Views.Pages.NewConnection;
 
 internal sealed class NewConnectionPage : VisualElement {
     private const string VisualTreeAssetGuid = "280eea869a434efd8a9abf4dd83eee43";

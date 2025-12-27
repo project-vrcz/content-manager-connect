@@ -1,4 +1,4 @@
-﻿namespace VRChatContentManagerConnect.Editor.Services.Rpc;
+﻿namespace VRChatContentPublisherConnect.Editor.Services.Rpc;
 
 internal interface IRpcClientIdProvider {
     string GetClientId();

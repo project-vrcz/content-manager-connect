@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VRChatContentManagerConnect.Editor.Utils;
+namespace VRChatContentPublisherConnect.Editor.Utils;
 
 public static class RandomWordsUtils {
     private static readonly string[] Terms = {

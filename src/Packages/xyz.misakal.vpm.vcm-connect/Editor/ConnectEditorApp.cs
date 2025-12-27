@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
-using VRChatContentManagerConnect.Editor.Services;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Editor;
+namespace VRChatContentPublisherConnect.Editor;
 
 internal class ConnectEditorApp {
     internal static ConnectEditorApp? Instance { get; private set; }
@@ -38,9 +38,9 @@ internal class ConnectEditorApp {
         };
 
     #if !VCCM_WORLDS_PACKAGE_EXIST && !VCCM_AVATARS_PACKAGE_EXIST
-        EditorUtility.DisplayDialog("VRChat Content Manager Connect",
-            "Warning: Required VRChat Content Manager packages are missing.\n" +
-            "Please ensure the 'VRChat Content Manager Connect - Worlds' or 'VRChat Content Manager Connect - Avatars' packages are installed.",
+        EditorUtility.DisplayDialog("VRChat Content Publisher Connect",
+            "Warning: Required VRChat Content Publisher packages are missing.\n" +
+            "Please ensure the 'VRChat Content Publisher Connect - Worlds' or 'VRChat Content Publisher Connect - Avatars' packages are installed.",
             "OK");
     #endif
     }

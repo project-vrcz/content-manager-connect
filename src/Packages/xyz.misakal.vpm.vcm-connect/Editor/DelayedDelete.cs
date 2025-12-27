@@ -4,11 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEditor;
-using UnityEngine;
-using VRChatContentManagerConnect.Editor.MenuItems;
+using VRChatContentPublisherConnect.Editor.MenuItems;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Editor;
+namespace VRChatContentPublisherConnect.Editor;
 
 internal static class DelayedDelete {
     private static readonly YesLogger Logger = new(LoggerConst.LoggerPrefix + nameof(DelayedDelete));

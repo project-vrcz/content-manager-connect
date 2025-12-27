@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
-using VRChatContentManagerConnect.Editor.Utils;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Utils;
 
-namespace VRChatContentManagerConnect.Editor.Services;
+namespace VRChatContentPublisherConnect.Editor.Services;
 
 internal sealed class AppRpcClientIdProvider : IRpcClientIdProvider {
     public string GetClientId() {

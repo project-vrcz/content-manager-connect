@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace VRChatContentManagerConnect.Editor.Models.RpcApi.Request;
+namespace VRChatContentPublisherConnect.Editor.Models.RpcApi.Request;
 
 internal record RequestChallengeRequest(
     [property: JsonPropertyName("ClientId")]

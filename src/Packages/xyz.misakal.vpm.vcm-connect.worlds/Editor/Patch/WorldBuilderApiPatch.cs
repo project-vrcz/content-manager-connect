@@ -3,23 +3,20 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using HarmonyLib;
-using Microsoft.Extensions.DependencyInjection;
 using VRC.SDK3.Editor;
 using VRC.SDKBase.Editor.Api;
-using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Services;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
-namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
+namespace VRChatContentPublisherConnect.Worlds.Editor.Patch {
     [HarmonyPatch]
     internal class WorldBuilderApiPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.worlds.pre-build-and-upload-check";
         public override string DisplayName => "Pre Build and Upload Check for Worlds";
 
         public override string Description =>
-            "Prevents build and upload if Content Manager is enabled but not connected.";
+            "Prevents build and upload if Content Publisher is enabled but not connected.";
 
         public override string Category => PatchConst.Category;
 

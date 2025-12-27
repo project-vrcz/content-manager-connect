@@ -1,10 +1,10 @@
 ﻿using HarmonyLib;
-using VRChatContentManagerConnect.Editor;
+using VRChatContentPublisherConnect.Editor;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
+namespace VRChatContentPublisherConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
     internal partial class RedirectUploadApiPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.redirect-avatar-upload-api";

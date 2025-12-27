@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace VRChatContentManagerConnect.Editor.Services;
+namespace VRChatContentPublisherConnect.Editor.Services;
 
 internal static class AppStorageService {
     public const string AppDataFolderName = "vrchat-content-manager-connect-81b7bca3";

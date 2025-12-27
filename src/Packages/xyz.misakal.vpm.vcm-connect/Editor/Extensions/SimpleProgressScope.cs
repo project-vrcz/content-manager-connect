@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEditor;
 
-namespace VRChatContentManagerConnect.Editor.Extensions;
+namespace VRChatContentPublisherConnect.Editor.Extensions;
 
 internal sealed class SimpleProgressScope : IDisposable {
     private readonly int _progressId;

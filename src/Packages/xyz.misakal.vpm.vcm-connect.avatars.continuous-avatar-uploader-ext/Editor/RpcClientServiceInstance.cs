@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader;
+namespace VRChatContentPublisherConnect.Avatars.Editor.ContinuousAvatarUploader;
 
 internal static class RpcClientServiceInstance {
     private static RpcClientService? _rpcClientService;
