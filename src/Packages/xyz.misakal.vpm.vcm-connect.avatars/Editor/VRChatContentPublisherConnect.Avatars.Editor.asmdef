@@ -1,6 +1,6 @@
 {
-    "name": "VRChatContentManagerConnect.Avatars.Editor",
-    "rootNamespace": "VRChatContentManagerConnect.Avatars.Editor",
+    "name": "VRChatContentPublisherConnect.Avatars.Editor",
+    "rootNamespace": "VRChatContentPublisherConnect.Avatars.Editor",
     "references": [
         "GUID:0c9bad51c4b14e6d823198f69a8b83a4",
         "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05",

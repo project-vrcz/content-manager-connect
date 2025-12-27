@@ -1,10 +1,10 @@
 ﻿using HarmonyLib;
 using UnityEditor;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader.Patch;
+namespace VRChatContentPublisherConnect.Avatars.Editor.ContinuousAvatarUploader.Patch;
 
 [HarmonyPatch]
 internal class ConnectionStatusPatch : YesPatchBase {

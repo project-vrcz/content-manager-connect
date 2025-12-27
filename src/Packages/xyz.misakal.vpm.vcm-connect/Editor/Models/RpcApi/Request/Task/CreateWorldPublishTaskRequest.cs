@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
+namespace VRChatContentPublisherConnect.Editor.Models.RpcApi.Request.Task;
 
 public record CreateWorldPublishTaskRequest(
     [property: JsonPropertyName("WorldId")]

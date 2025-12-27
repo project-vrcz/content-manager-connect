@@ -1,9 +1,10 @@
 {
-    "name": "VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader",
-    "rootNamespace": "VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader",
+    "name": "VRChatContentPublisherConnect.Worlds.Editor",
+    "rootNamespace": "VRChatContentPublisherConnect.Worlds.Editor",
     "references": [
         "GUID:0c9bad51c4b14e6d823198f69a8b83a4",
-        "GUID:a8a95dde350644584a64b7c14fc7222d",
+        "GUID:6e9c6119ac4eb334284fb7b4bc6d1f05",
+        "GUID:1b3abf7e59395d84c84b48d69677daaa",
         "GUID:c427fdff1390e954e91e12eb67f5cf3e"
     ],
     "includePlatforms": [
@@ -13,13 +14,21 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "0Harmony.dll",
+        "VRCSDK3-Editor.dll",
+        "VRCCore-Editor.dll",
         "VCMC.Microsoft.Extensions.DependencyInjection.Abstractions.dll",
         "VCMC.Microsoft.Extensions.DependencyInjection.dll",
+        "0Harmony.dll",
         "YPF4VRC.Microsoft.Bcl.AsyncInterfaces.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.vrchat.worlds",
+            "expression": "3.7.2",
+            "define": "VCCM_WORLD_SDK_3_7_2_OR_NEWER"
+        }
+    ],
     "noEngineReferences": false
 }

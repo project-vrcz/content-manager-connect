@@ -8,12 +8,12 @@ using UnityEngine;
 using VRC;
 using VRC.Core;
 using VRC.SDKBase.Editor.Api;
-using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
-using VRChatContentManagerConnect.Editor.Services;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor;
+using VRChatContentPublisherConnect.Editor.Models.RpcApi.Request.Task;
+using VRChatContentPublisherConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Worlds.Editor.Patch {
+namespace VRChatContentPublisherConnect.Worlds.Editor.Patch {
     internal partial class RedirectUploadApiPatch {
         // public static async Task<VRCWorld> UpdateWorldBundle(
         // string id, VRCWorld data, string pathToBundle, string worldSignature, 

@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
-using VRChatContentManagerConnect.Editor.Patch;
+using VRChatContentPublisherConnect.Editor.Patch;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 
 [assembly: ExportYesPatch(typeof(AssetBundleValidationPatch))]
 
-[assembly: InternalsVisibleTo("VRChatContentManagerConnect.Worlds.Editor")]
-[assembly: InternalsVisibleTo("VRChatContentManagerConnect.Avatars.Editor")]
-[assembly: InternalsVisibleTo("VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader")]
+[assembly: InternalsVisibleTo("VRChatContentPublisherConnect.Worlds.Editor")]
+[assembly: InternalsVisibleTo("VRChatContentPublisherConnect.Avatars.Editor")]
+[assembly: InternalsVisibleTo("VRChatContentPublisherConnect.Avatars.Editor.ContinuousAvatarUploader")]

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Threading.Tasks;
 using UnityEditor;
-using UnityEngine;
-using VRChatContentManagerConnect.Editor.MenuItems;
-using VRChatContentManagerConnect.Editor.Models;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.MenuItems;
+using VRChatContentPublisherConnect.Editor.Models;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Editor.Services;
+namespace VRChatContentPublisherConnect.Editor.Services;
 
 internal sealed class MenuItemService {
     private static MenuItemService? Instance { get; set; }
@@ -14,7 +12,7 @@ internal sealed class MenuItemService {
     private const string IsRpcConnectedMenuItemPath = MenuItemPath.RootMenuItemPath + "Is RPC Connected";
 
     private const string EnableContentManagerPublishFlowMenuItemPath =
-        MenuItemPath.RootMenuItemPath + "Enable Content Manager Publish Flow";
+        MenuItemPath.RootMenuItemPath + "Enable Content Publisher Publish Flow";
 
     private const string RestoreSessionMenuItemPath = MenuItemPath.RootMenuItemPath + "Restore Session";
 

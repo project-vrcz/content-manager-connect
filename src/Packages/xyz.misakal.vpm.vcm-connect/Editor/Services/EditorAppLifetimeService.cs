@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using UnityEngine;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Editor.Services;
+namespace VRChatContentPublisherConnect.Editor.Services;
 
 internal sealed class EditorAppLifetimeService {
     private readonly RpcClientService _rpcClientService;

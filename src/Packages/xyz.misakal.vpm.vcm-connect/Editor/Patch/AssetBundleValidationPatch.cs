@@ -1,14 +1,13 @@
 ﻿using System;
 using System.IO;
 using HarmonyLib;
-using UnityEngine;
 using VRC;
 using VRC.SDKBase.Editor.Validation;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Editor.Patch {
+namespace VRChatContentPublisherConnect.Editor.Patch {
     // public static bool CheckIfAssetBundleFileTooLarge(
     //  ContentType contentType,
     //  string vrcFilePath,

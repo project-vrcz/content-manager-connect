@@ -1,4 +1,4 @@
-﻿using VRChatContentManagerConnect.Worlds.Editor.Patch;
+﻿using VRChatContentPublisherConnect.Worlds.Editor.Patch;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 
 [assembly: ExportYesPatch(typeof(WorldAssetExporterPatch))]

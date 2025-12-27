@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using VRChatContentManagerConnect.Editor.Models;
+using VRChatContentPublisherConnect.Editor.Models;
 
-namespace VRChatContentManagerConnect.Editor.Services.Rpc;
+namespace VRChatContentPublisherConnect.Editor.Services.Rpc;
 
 internal interface IRpcClientSessionProvider {
     ValueTask<RpcClientSession?> GetSessionsAsync();

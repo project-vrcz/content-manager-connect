@@ -1,8 +1,8 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using VRChatContentManagerConnect.Editor.MenuItems;
+using VRChatContentPublisherConnect.Editor.MenuItems;
 
-namespace VRChatContentManagerConnect.Editor;
+namespace VRChatContentPublisherConnect.Editor;
 
 internal static class OpenApplicationTempFolder {
     [MenuItem(MenuItemPath.RootMenuItemPath + "Open Application Temp Folder")]

@@ -1,11 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using UnityEngine;
 using UnityEngine.UIElements;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 
-namespace VRChatContentManagerConnect.Editor.Views.Pages.Connected;
+namespace VRChatContentPublisherConnect.Editor.Views.Pages.Connected;
 
 internal sealed class ConnectedPage : VisualElement {
     private readonly RpcClientService _rpcClientService;

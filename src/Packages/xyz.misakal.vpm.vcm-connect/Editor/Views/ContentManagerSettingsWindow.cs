@@ -1,9 +1,9 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using VRChatContentManagerConnect.Editor.MenuItems;
+using VRChatContentPublisherConnect.Editor.MenuItems;
 
-namespace VRChatContentManagerConnect.Editor.Views {
+namespace VRChatContentPublisherConnect.Editor.Views {
     public class ContentManagerSettingsWindow : EditorWindow {
         [MenuItem(MenuItemPath.RootWindowMenuItemPath + "Settings", priority = 2000)]
         [MenuItem(MenuItemPath.RootMenuItemPath + "Settings")]

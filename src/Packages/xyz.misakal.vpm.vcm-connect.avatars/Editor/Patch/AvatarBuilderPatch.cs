@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
 using UnityEngine;
 using VRC.SDK3.Builder;
-using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor;
+using VRChatContentPublisherConnect.Editor.Services;
 using YesPatchFrameworkForVRChatSdk.PatchApi;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Extensions;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.Patch {
+namespace VRChatContentPublisherConnect.Avatars.Editor.Patch {
     [HarmonyPatch]
     internal class AvatarBuilderPatch : YesPatchBase {
         public override string Id => "xyz.misakal.vpm.vcm-connect.avatars.fix-build-failed-due-to-file-delete-failed";

@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using UnityEditor;
-using VRChatContentManagerConnect.Editor.Exceptions.PreUploadCheck;
-using VRChatContentManagerConnect.Editor.Services;
-using VRChatContentManagerConnect.Editor.Services.Rpc;
+using VRChatContentPublisherConnect.Editor.Exceptions.PreUploadCheck;
+using VRChatContentPublisherConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor.Services.Rpc;
 
-namespace VRChatContentManagerConnect.Editor;
+namespace VRChatContentPublisherConnect.Editor;
 
 internal static class PreUploadCheck {
     public static bool IsTaskRunning { get; private set; }
@@ -18,7 +18,7 @@ internal static class PreUploadCheck {
         if (ConnectEditorApp.Instance is not { } app) {
             EditorUtility.DisplayDialog(
                 "Failed to Start Upload",
-                "VRChat Content Manager Connect is not initialized.",
+                "VRChat Content Publisher Connect is not initialized.",
                 "OK");
             return;
         }
@@ -98,7 +98,7 @@ internal static class PreUploadCheck {
 
     public static async Task PreUploadCheckAsync() {
         if (ConnectEditorApp.Instance is not { } app)
-            throw new InvalidOperationException("VRChat Content Manager Connect is not initialized.");
+            throw new InvalidOperationException("VRChat Content Publisher Connect is not initialized.");
 
         var rpcClientService = app.ServiceProvider.GetRequiredService<RpcClientService>();
 

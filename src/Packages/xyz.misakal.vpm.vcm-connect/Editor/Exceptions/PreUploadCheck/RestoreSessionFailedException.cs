@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VRChatContentManagerConnect.Editor.Exceptions.PreUploadCheck;
+namespace VRChatContentPublisherConnect.Editor.Exceptions.PreUploadCheck;
 
 public sealed class RestoreSessionFailedException : Exception {
     public RestoreSessionFailedException(Exception innerException) : base(

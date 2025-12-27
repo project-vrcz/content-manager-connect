@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using VRChatContentManagerConnect.Editor;
-using VRChatContentManagerConnect.Editor.Services;
+using VRChatContentPublisherConnect.Editor;
+using VRChatContentPublisherConnect.Editor.Services;
 
-namespace VRChatContentManagerConnect.Avatars.Editor.ContinuousAvatarUploader;
+namespace VRChatContentPublisherConnect.Avatars.Editor.ContinuousAvatarUploader;
 
 internal static class AppSettingsServiceInstance {
     private static AppSettingsService? _appSettingsService;

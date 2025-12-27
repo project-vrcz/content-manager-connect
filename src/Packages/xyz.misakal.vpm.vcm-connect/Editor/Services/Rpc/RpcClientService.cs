@@ -6,18 +6,17 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
-using VRChatContentManagerConnect.Editor.Exceptions;
-using VRChatContentManagerConnect.Editor.Extensions;
-using VRChatContentManagerConnect.Editor.Models;
-using VRChatContentManagerConnect.Editor.Models.RpcApi.Request;
-using VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
-using VRChatContentManagerConnect.Editor.Models.RpcApi.Response;
+using VRChatContentPublisherConnect.Editor.Exceptions;
+using VRChatContentPublisherConnect.Editor.Extensions;
+using VRChatContentPublisherConnect.Editor.Models;
+using VRChatContentPublisherConnect.Editor.Models.RpcApi.Request;
+using VRChatContentPublisherConnect.Editor.Models.RpcApi.Request.Task;
+using VRChatContentPublisherConnect.Editor.Models.RpcApi.Response;
 using YesPatchFrameworkForVRChatSdk.PatchApi.Logging;
 using Random = System.Random;
 
-namespace VRChatContentManagerConnect.Editor.Services.Rpc;
+namespace VRChatContentPublisherConnect.Editor.Services.Rpc;
 
 internal sealed class RpcClientService {
     public event EventHandler<RpcClientState>? StateChanged;
@@ -133,7 +132,7 @@ internal sealed class RpcClientService {
             _logger.LogWarning(ex, "Failed to restore session to local RPC server, trying to launch local app.");
         }
 
-        reportProgress?.Invoke("Trying to launch local VRChat Content Manager App...");
+        reportProgress?.Invoke("Trying to launch local VRChat Content Publisher App...");
         TryLaunchLocalApp();
         // 3 seconds should be enough, unless user running on a potato PC
         await Task.Delay(TimeSpan.FromSeconds(3));

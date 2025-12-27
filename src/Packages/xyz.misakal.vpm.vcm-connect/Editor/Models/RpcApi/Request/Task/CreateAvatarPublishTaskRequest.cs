@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace VRChatContentManagerConnect.Editor.Models.RpcApi.Request.Task;
+namespace VRChatContentPublisherConnect.Editor.Models.RpcApi.Request.Task;
 
 internal record CreateAvatarPublishTaskRequest(
     [property: JsonPropertyName("AvatarId")]
